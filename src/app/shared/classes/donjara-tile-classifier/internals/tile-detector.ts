@@ -1,15 +1,17 @@
 import * as tf from '@tensorflow/tfjs';
+import { ClassifierHelper } from './classifier-helper';
 
 /**
  * ドンジャラのパイ検出器
  */
-export interface DetectedTile {
+export interface TileDetectorResult {
   className: 'tile';
   x: number;
   y: number;
   w: number;
   h: number;
   score: number;
+  image: HTMLCanvasElement;
 }
 
 export class TileDetector {
@@ -39,14 +41,14 @@ export class TileDetector {
 
   async detect(
     inputFrame: HTMLCanvasElement
-  ): Promise<{ preview: HTMLCanvasElement }> {
+  ): Promise<{ preview: HTMLCanvasElement; tiles: TileDetectorResult[] }> {
     if (!this.model) throw new Error('Model is not loaded yet');
 
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d')!;
     canvas.width = inputFrame.width;
     canvas.height = inputFrame.height;
-    this.cropImageOnCanvas(inputFrame, canvas, ctx);
+    ClassifierHelper.cropImageOnCanvas(inputFrame, canvas, ctx);
 
     const shape = this.model?.inputs[0].shape?.slice(1, 3);
     if (!shape) throw new Error('shape is undefined');
@@ -82,6 +84,7 @@ export class TileDetector {
 
     return {
       preview: canvas,
+      tiles: detectedTiles,
     };
   }
 
@@ -92,7 +95,7 @@ export class TileDetector {
     classIndexes: Float32Array,
     numOfDetections: number
   ) {
-    const detectedTiles: DetectedTile[] = [];
+    const detectedTiles: TileDetectorResult[] = [];
     for (let i = 0; i < numOfDetections; i++) {
       let [x1, y1, x2, y2] = boxes.slice(i * 4, (i + 1) * 4);
       x1 *= image.width;
@@ -112,6 +115,12 @@ export class TileDetector {
         continue;
       }
 
+      const tileImage = document.createElement('canvas');
+      tileImage.width = width;
+      tileImage.height = height;
+      const ctx = tileImage.getContext('2d')!;
+      ctx.drawImage(image, x1, y1, width, height, 0, 0, width, height);
+
       detectedTiles.push({
         className,
         x: x1,
@@ -119,43 +128,19 @@ export class TileDetector {
         w: width,
         h: height,
         score,
+        image: tileImage,
       });
     }
+
+    // 左から順にソート
+    detectedTiles.sort((a, b) => a.x - b.x);
 
     return detectedTiles;
   }
 
-  private cropImageOnCanvas(
-    src: HTMLCanvasElement,
-    dst: HTMLCanvasElement,
-    ctx: CanvasRenderingContext2D
-  ) {
-    const imageWidth = src.width;
-    const imageHeight = src.height;
-    const imageAspect = imageWidth / imageHeight;
-
-    const canvasWidth = dst.width;
-    const canvasHeight = dst.height;
-    const canvasAspect = canvasWidth / canvasHeight;
-
-    if (imageAspect > canvasAspect) {
-      const scaledHeight = canvasWidth / imageAspect;
-      const scaledWidth = canvasWidth;
-      const scaledX = 0;
-      const scaledY = (canvasHeight - scaledHeight) / 2;
-      ctx.drawImage(src, scaledX, scaledY, scaledWidth, scaledHeight);
-    } else {
-      const scaledHeight = canvasHeight;
-      const scaledWidth = canvasHeight * imageAspect;
-      const scaledX = (canvasWidth - scaledWidth) / 2;
-      const scaledY = 0;
-      ctx.drawImage(src, scaledX, scaledY, scaledWidth, scaledHeight);
-    }
-  }
-
   private drawPreview(
     canvas: HTMLCanvasElement,
-    detectedTiles: DetectedTile[]
+    detectedTiles: TileDetectorResult[]
   ) {
     const ctx = canvas.getContext('2d')!;
 

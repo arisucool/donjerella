@@ -20,6 +20,10 @@ export class ClassifierService {
     return this.classifier.getPreviewMediaStream();
   }
 
+  public get onClassified$() {
+    return this.classifier.onClassified$;
+  }
+
   async start() {
     return this.classifier.start();
   }

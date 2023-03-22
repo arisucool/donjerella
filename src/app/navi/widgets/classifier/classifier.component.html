@@ -1,6 +1,24 @@
 <video
   [srcObject]="this.previewMediaStream"
-  *ngIf="this.previewMediaStream"
+  *ngIf="
+    this.previewMediaStream && this.previewMediaStream.getTracks().length > 0
+  "
   autoplay
   muted
+  width="320"
 ></video>
+
+<div class="detected-tiles">
+  <ng-container *ngIf="onClassified$ | async as classifiedResult">
+    <ng-container *ngFor="let tile of classifiedResult.tiles">
+      <div
+        class="tile"
+        [style.background-image]="'url(' + tile.imageDataUrl + ')'"
+      >
+        <span>{{ tile.top.label }}</span>
+        &nbsp;&nbsp;<br />
+        <small>({{ tile.top.score | number : "1.0-2" }})</small>
+      </div>
+    </ng-container>
+  </ng-container>
+</div>

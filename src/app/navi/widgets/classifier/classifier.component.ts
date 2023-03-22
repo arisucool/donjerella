@@ -10,6 +10,7 @@ import { ClassifierService } from '../../services/classifier.service';
 })
 export class ClassifierComponent implements OnInit, OnDestroy {
   public previewMediaStream?: MediaStream;
+  public onClassified$ = this.classifierService.onClassified$;
 
   constructor(
     public classifierService: ClassifierService,
@@ -19,9 +20,13 @@ export class ClassifierComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     try {
       await this.classifierService.initialize();
-      this.previewMediaStream = this.classifierService.getCameraPreviewStream();
+      window.setTimeout(() => {
+        this.previewMediaStream =
+          this.classifierService.getCameraPreviewStream();
+      }, 1000);
       await this.classifierService.start();
     } catch (e: any) {
+      console.error(e);
       this.snackBar.open(`エラー: ${e.message}`);
     }
   }

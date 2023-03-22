@@ -1,4 +1,23 @@
+import { Subject } from 'rxjs';
+import { TileClassifier } from './internals/tile-classifier';
 import { TileDetector } from './internals/tile-detector';
+import { TileSurfaceExtractor } from './internals/tile-surface-extractor';
+
+export interface DonjaraTileClassifierResultItem {
+  identifier: string;
+  label: string;
+  pack: 'initial' | 'expansion';
+  status?: 'normal' | 'reached';
+  score: number;
+}
+
+export interface DonjaraTileClassifierResult {
+  tiles: {
+    top: DonjaraTileClassifierResultItem;
+    predicts: DonjaraTileClassifierResultItem[];
+    imageDataUrl: string;
+  }[];
+}
 
 export class DonjaraTileClassifier {
   // 入力映像
@@ -19,11 +38,21 @@ export class DonjaraTileClassifier {
   private previewCanvasContext: CanvasRenderingContext2D | undefined;
   private previewMediaStream: MediaStream | undefined;
 
+  // 検出結果を返すためのイベント
+  private onClassified = new Subject<DonjaraTileClassifierResult>();
+  public onClassified$ = this.onClassified.asObservable();
+
   // オブジェクト検出器
   private tileDetector!: TileDetector;
 
+  // 分類器
+  private tileClassifier!: TileClassifier;
+
   constructor(params: { modelBaseUrl: string }) {
     this.tileDetector = new TileDetector({
+      modelBaseUrl: params.modelBaseUrl,
+    });
+    this.tileClassifier = new TileClassifier({
       modelBaseUrl: params.modelBaseUrl,
     });
   }
@@ -48,6 +77,7 @@ export class DonjaraTileClassifier {
 
     // モデルの読み込み
     await this.tileDetector.loadModel();
+    await this.tileClassifier.loadModel();
   }
 
   getPreviewMediaStream() {
@@ -125,12 +155,54 @@ export class DonjaraTileClassifier {
       if (!tileDetectionResult) {
         return;
       }
+      let previewImage = tileDetectionResult.preview;
+
+      // 検出されたパイを分類
+      const classifiedTiles: {
+        top: DonjaraTileClassifierResultItem;
+        predicts: DonjaraTileClassifierResultItem[];
+        imageDataUrl: string;
+      }[] = [];
+      if (tileDetectionResult.tiles.length > 0) {
+        for (const tile of tileDetectionResult.tiles) {
+          let surfaceImage = TileSurfaceExtractor.extractSurface(tile.image);
+          if (!surfaceImage) {
+            continue;
+          }
+          const classifierResult = await this.tileClassifier.classify(
+            surfaceImage
+          );
+
+          const predicts: DonjaraTileClassifierResultItem[] = [];
+          for (const item of classifierResult.predicts) {
+            predicts.push({
+              identifier: item.className,
+              label: item.className,
+              pack: 'initial',
+              status: 'normal',
+              score: item.score,
+            });
+          }
+          classifiedTiles.push({
+            top: predicts[0],
+            predicts: predicts,
+            imageDataUrl: classifierResult.image
+              ? classifierResult.image.toDataURL('image/jpeg')
+              : surfaceImage.toDataURL('image/jpeg'),
+          });
+        }
+      }
+      if (classifiedTiles.length > 0) {
+        this.onClassified.next({
+          tiles: classifiedTiles,
+        });
+      }
 
       // プレビュー映像を描画
       this.previewCanvas.width = tileDetectionResult.preview.width;
       this.previewCanvas.height = tileDetectionResult.preview.height;
       this.previewCanvasContext.drawImage(
-        tileDetectionResult.preview,
+        previewImage!,
         0,
         0,
         this.previewCanvas.width,
