@@ -13,21 +13,22 @@ export interface DetectedTile {
 }
 
 export class TileDetector {
-  static readonly OBJECT_DETECTION_MODEL_URL =
-    '/assets/models/object-detection';
   static readonly MINIMUM_SCORE = 0.4;
 
+  private modelBaseUrl?: string;
   private model?: tf.GraphModel;
   private classes?: string[];
 
-  constructor() {}
+  constructor(params: { modelBaseUrl: string }) {
+    this.modelBaseUrl = params.modelBaseUrl;
+  }
 
   async loadModel() {
     this.model = await tf.loadGraphModel(
-      `${TileDetector.OBJECT_DETECTION_MODEL_URL}/model.json`
+      `${this.modelBaseUrl}/object-detection/model.json`
     );
     const req = await fetch(
-      `${TileDetector.OBJECT_DETECTION_MODEL_URL}/classes.txt`
+      `${this.modelBaseUrl}/object-detection/classes.txt`
     );
     this.classes = (await req.text()).split('\n');
     console.log(

@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { DonjaraTileClassifier } from 'src/app/shared/classes/donjara-tile-classifier/donjara-tile-classifier';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ClassifierService {
-  private classifier = new DonjaraTileClassifier();
+  private classifier = new DonjaraTileClassifier({
+    modelBaseUrl: environment.modelBaseUrl,
+  });
 
   constructor() {}
 

@@ -22,8 +22,10 @@ export class DonjaraTileClassifier {
   // オブジェクト検出器
   private tileDetector!: TileDetector;
 
-  constructor() {
-    this.tileDetector = new TileDetector();
+  constructor(params: { modelBaseUrl: string }) {
+    this.tileDetector = new TileDetector({
+      modelBaseUrl: params.modelBaseUrl,
+    });
   }
 
   async initialize() {

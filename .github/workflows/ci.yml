@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+
+jobs:
+  # 自動デプロイのためのビルド (main ブランチのみ)
+  build-for-deploy:
+    if: startsWith(github.ref, 'refs/heads/main')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+        env:
+          CI: true
+
+      - name: Build app
+        run: |
+          REPOSITORY_NAME=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')
+          npm run build -- --deploy-url "/${REPOSITORY_NAME}/" --base-href "/${REPOSITORY_NAME}"
+          cp -r dist/ docs/
+          cp docs/index.html docs/404.html
+
+      - name: Upload app to gh-pages branch
+        uses: JamesIves/github-pages-deploy-action@ba1486788b0490a235422264426c45848eac35c6
+        with:
+          branch: gh-pages
+          folder: docs/
