@@ -32,6 +32,7 @@ export class DonjaraTileClassifier {
 
   // 入力映像からフレームを抽出するためのキャンバス
   private inputFrameCanvas: HTMLCanvasElement | undefined;
+  private inputFrameCanvasContext: CanvasRenderingContext2D | undefined;
 
   // プレビュー映像
   private previewCanvas: HTMLCanvasElement | undefined;
@@ -45,13 +46,17 @@ export class DonjaraTileClassifier {
   // オブジェクト検出器
   private tileDetector!: TileDetector;
 
-  // 分類器
+  // パイの表面領域の抽出器
+  private tileSurfaceExtractor!: TileSurfaceExtractor;
+
+  // パイの表面領域の分類器
   private tileClassifier!: TileClassifier;
 
   constructor(params: { modelBaseUrl: string }) {
     this.tileDetector = new TileDetector({
       modelBaseUrl: params.modelBaseUrl,
     });
+    this.tileSurfaceExtractor = new TileSurfaceExtractor();
     this.tileClassifier = new TileClassifier({
       modelBaseUrl: params.modelBaseUrl,
     });
@@ -68,16 +73,30 @@ export class DonjaraTileClassifier {
       throw new Error('Failed to get canvas context');
     }
 
-    this.previewCanvasContext!.fillStyle = 'black';
-    this.previewCanvasContext!.fillRect(0, 0, 100, 100);
+    this.previewCanvasContext.fillStyle = 'black';
+    this.previewCanvasContext.fillRect(0, 0, 100, 100);
     this.previewMediaStream = this.previewCanvas.captureStream(30);
 
     // 入力映像からフレームを抽出するためのキャンバスを初期化
     this.inputFrameCanvas = document.createElement('canvas');
+    this.inputFrameCanvas.width = 100;
+    this.inputFrameCanvas.height = 100;
+    this.inputFrameCanvasContext =
+      this.inputFrameCanvas.getContext('2d') ?? undefined;
+    if (this.inputFrameCanvasContext === undefined) {
+      throw new Error('Failed to get canvas context');
+    }
+
+    this.inputFrameCanvasContext.fillStyle = 'black';
+    this.inputFrameCanvasContext.fillRect(0, 0, 100, 100);
 
     // モデルの読み込み
     await this.tileDetector.loadModel();
     await this.tileClassifier.loadModel();
+
+    // ウォームアップ
+    await this.tileDetector.detect(this.inputFrameCanvas);
+    await this.tileClassifier.classify(this.inputFrameCanvas);
   }
 
   getPreviewMediaStream() {
@@ -117,6 +136,7 @@ export class DonjaraTileClassifier {
   private async tick() {
     if (
       !this.inputVideoElement ||
+      !this.inputFrameCanvasContext ||
       !this.inputMediaStream ||
       !this.inputFrameCanvas ||
       !this.previewCanvas ||
@@ -138,9 +158,7 @@ export class DonjaraTileClassifier {
       // 入力映像からフレームを抽出
       this.inputFrameCanvas.width = this.inputVideoElement.videoWidth;
       this.inputFrameCanvas.height = this.inputVideoElement.videoHeight;
-
-      const ctx = this.inputFrameCanvas.getContext('2d')!;
-      ctx.drawImage(
+      this.inputFrameCanvasContext.drawImage(
         this.inputVideoElement,
         0,
         0,
@@ -157,7 +175,7 @@ export class DonjaraTileClassifier {
       }
       let previewImage = tileDetectionResult.preview;
 
-      // 検出されたパイを分類
+      // 検出された各パイを処理
       const classifiedTiles: {
         top: DonjaraTileClassifierResultItem;
         predicts: DonjaraTileClassifierResultItem[];
@@ -165,10 +183,15 @@ export class DonjaraTileClassifier {
       }[] = [];
       if (tileDetectionResult.tiles.length > 0) {
         for (const tile of tileDetectionResult.tiles) {
-          let surfaceImage = TileSurfaceExtractor.extractSurface(tile.image);
+          // パイから表面領域を抽出
+          let surfaceImage = this.tileSurfaceExtractor.extractSurface(
+            tile.image
+          );
           if (!surfaceImage) {
             continue;
           }
+
+          // 抽出された表面領域からパイを分類
           const classifierResult = await this.tileClassifier.classify(
             surfaceImage
           );

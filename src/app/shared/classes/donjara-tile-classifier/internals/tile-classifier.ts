@@ -14,9 +14,13 @@ export class TileClassifier {
   private modelBaseUrl?: string;
   private model?: any;
   private classes?: string[];
+  private canvas: HTMLCanvasElement;
+  private canvasContext: CanvasRenderingContext2D;
 
   constructor(params: { modelBaseUrl: string }) {
     this.modelBaseUrl = params.modelBaseUrl;
+    this.canvas = document.createElement('canvas');
+    this.canvasContext = this.canvas.getContext('2d')!;
   }
 
   async loadModel() {
@@ -34,11 +38,13 @@ export class TileClassifier {
   async classify(inputFrame: HTMLCanvasElement): Promise<TileClassifierResult> {
     if (!this.model) throw new Error('Model is not loaded yet');
 
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d')!;
-    canvas.width = inputFrame.width;
-    canvas.height = inputFrame.height;
-    ClassifierHelper.cropImageOnCanvas(inputFrame, canvas, ctx);
+    this.canvas.width = inputFrame.width;
+    this.canvas.height = inputFrame.height;
+    ClassifierHelper.cropImageOnCanvas(
+      inputFrame,
+      this.canvas,
+      this.canvasContext
+    );
 
     const shape = this.model?.inputs[0].shape?.slice(1, 3);
     if (!shape) throw new Error('shape is undefined');
@@ -47,7 +53,7 @@ export class TileClassifier {
 
     const input = tf.tidy(() => {
       return tf.image
-        .resizeBilinear(tf.browser.fromPixels(canvas), [
+        .resizeBilinear(tf.browser.fromPixels(this.canvas), [
           shapeWidth,
           shapeHeight,
         ])
@@ -60,12 +66,13 @@ export class TileClassifier {
       return value * 100;
     });
     let predArgMax = tf.argMax(predScores).dataSync<'int32'>();
+    tf.dispose(input);
     tf.dispose(res);
 
     const classIndex = predArgMax[0];
     if (!this.classes)
       return {
-        image: canvas,
+        image: this.canvas,
         predicts: [],
       };
 
@@ -79,7 +86,7 @@ export class TileClassifier {
     resultItems;
 
     return {
-      image: canvas,
+      image: this.canvas,
       predicts: resultItems,
     };
   }
