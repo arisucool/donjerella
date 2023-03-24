@@ -38,6 +38,10 @@ export class ScannerComponent implements OnInit, OnDestroy {
   // カメラ映像のストリーム
   public cameraVideoStream?: MediaStream;
 
+  // プレビュー映像を再生するための Video 要素
+  @ViewChild('previewVideo')
+  previewVideoElement!: ElementRef<HTMLVideoElement>;
+
   // プレビュー映像のストリーム
   public previewMediaStream?: MediaStream;
 
@@ -143,13 +147,16 @@ export class ScannerComponent implements OnInit, OnDestroy {
       this.onFatalError(e);
       return;
     }
-    this.previewMediaStream = this.scannerService.getCameraPreviewStream();
 
-    // シャッターボタンにフォーカスを当てる
-    this.setFocusToShutterButton();
+    timer(1000).subscribe(() => {
+      this.previewMediaStream = this.scannerService.getCameraPreviewStream();
 
-    // 完了
-    this.status = 'ready';
+      // シャッターボタンにフォーカスを当てる
+      this.setFocusToShutterButton();
+
+      // 完了
+      this.status = 'ready';
+    });
   }
 
   private async initCamera() {
@@ -226,6 +233,14 @@ export class ScannerComponent implements OnInit, OnDestroy {
 
     if (this.cameraVideoElement) {
       this.cameraVideoElement.nativeElement.pause();
+    }
+
+    if (this.previewMediaStream) {
+      this.previewMediaStream.getTracks().forEach((track) => track.stop());
+    }
+
+    if (this.previewVideoElement) {
+      this.previewVideoElement.nativeElement.pause();
     }
   }
 

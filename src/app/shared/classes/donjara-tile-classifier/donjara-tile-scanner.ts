@@ -27,7 +27,6 @@ export class DonjaraTileScanner {
   // プレビュー映像
   private previewCanvas: HTMLCanvasElement | undefined;
   private previewCanvasContext: CanvasRenderingContext2D | undefined;
-  private previewMediaStream: MediaStream | undefined;
 
   // オブジェクト検出の状態変化を伝えるためのイベント
   private onDetectionStatusChanged = new Subject<number>();
@@ -78,7 +77,6 @@ export class DonjaraTileScanner {
 
     this.previewCanvasContext.fillStyle = 'black';
     this.previewCanvasContext.fillRect(0, 0, 100, 100);
-    this.previewMediaStream = this.previewCanvas.captureStream(30);
 
     // 入力映像からフレームを抽出するためのキャンバスを初期化
     this.inputFrameCanvas = document.createElement('canvas');
@@ -104,7 +102,7 @@ export class DonjaraTileScanner {
   }
 
   getPreviewMediaStream() {
-    return this.previewMediaStream;
+    return this.previewCanvas!.captureStream(30);
   }
 
   async onVideoFrame(videoElement: HTMLVideoElement) {

@@ -30,13 +30,14 @@
     <video
       #cameraVideo
       [srcObject]="this.cameraVideoStream"
-      [style.display]="this.previewMediaStream ? 'none' : 'block'"
       class="camera-preview"
+      [ngClass]="{ hide: this.previewMediaStream }"
       autoplay
       muted
       playsinline
     ></video>
     <video
+      #previewVideo
       class="camera-preview"
       [srcObject]="this.previewMediaStream"
       [style.display]="!this.previewMediaStream ? 'none' : 'block'"
