@@ -1,1 +1,69 @@
-<app-scanner></app-scanner>
+<!-- 縦画面警告 -->
+<div class="vertical-screen-warning">
+  <mat-icon>screen_lock_portrait</mat-icon>
+  <span>横画面でご利用ください</span>
+</div>
+<!---->
+
+<!-- スキャナ起動ボタン -->
+<button
+  class="scanner-launch-button"
+  mat-raised-button
+  (click)="isLaunchingScanner = true"
+>
+  <mat-icon>camera_alt</mat-icon>
+  <span>認識を開始</span>
+</button>
+<!---->
+
+<!-- スキャナ領域 -->
+<app-scanner
+  *ngIf="isLaunchingScanner"
+  (onScanned)="onScanned($event)"
+  (onDismissed)="onScannerDismissed()"
+></app-scanner>
+<!---->
+
+<!-- 手牌一覧領域 -->
+<section class="hold-tiles">
+  <ng-container *ngIf="holdTiles">
+    <ng-container *ngFor="let tile of holdTiles">
+      <article
+        class="tile hold-tile"
+        [matTooltip]="'(検出スコア: ' + tile.score + ')'"
+      >
+        <img class="tile-image" [src]="tile.imageUrl" />
+        <div class="tile-label">
+          <span>{{ tile.label }}</span>
+        </div>
+      </article>
+    </ng-container>
+  </ng-container>
+</section>
+<!---->
+
+<!-- ユニット一覧領域 -->
+<section class="units" *ngIf="recommendedUnits && recommendedUnits.length > 0">
+  <ng-container *ngFor="let unit of recommendedUnits">
+    <div class="unit">
+      <span class="unit-label">
+        {{ unit.label }}
+      </span>
+
+      <ng-container *ngFor="let tile of unit.tiles">
+        <article
+          class="tile unit-tile"
+          [ngClass]="{ hold: tile.isHold }"
+          [matTooltip]="'(検出スコア: ' + tile.score + ')'"
+        >
+          <img class="tile-image" [src]="tile.imageUrl" />
+          <div class="tile-label">
+            <span>{{ tile.label }}</span>
+          </div>
+          <mat-icon class="hold-mark" *ngIf="tile.isHold">done</mat-icon>
+        </article>
+      </ng-container>
+    </div>
+  </ng-container>
+</section>
+<!---->

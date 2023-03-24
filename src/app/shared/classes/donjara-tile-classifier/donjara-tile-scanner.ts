@@ -76,6 +76,10 @@ export class DonjaraTileScanner {
   }
 
   async initialize() {
+    if (this.previewCanvas) {
+      return;
+    }
+
     // プレビュー映像生成用キャンバスを初期化
     this.previewCanvas = document.createElement('canvas');
     this.previewCanvas.width = 100;
@@ -116,32 +120,44 @@ export class DonjaraTileScanner {
     return this.previewMediaStream;
   }
 
-  async start(
+  async startCamera(
     constraints: MediaStreamConstraints = DonjaraTileScanner.DEFAULT_MEDIA_STREAM_CONSTRAINTS
   ) {
+    if (this.inputMediaStream) {
+      return;
+    }
     this.inputMediaStream = await navigator.mediaDevices.getUserMedia(
       constraints
     );
     if (!this.inputMediaStream) {
       throw new Error('Failed to get media stream');
     }
-
-    this.inputVideoElement = document.createElement('video');
-    this.inputVideoElement.srcObject = this.inputMediaStream;
-    this.inputVideoElement.play();
-
-    this.tick();
   }
 
-  stop() {
+  async startLoop() {
+    if (!this.inputMediaStream) {
+      await this.startCamera();
+    }
+
+    this.inputVideoElement = document.createElement('video');
+    this.inputVideoElement.srcObject = this.inputMediaStream!;
+    await this.inputVideoElement.play();
+    console.log(`[DonjaraTileScanner] start - Started`);
+
+    await this.tick();
+  }
+
+  stopLoop() {
+    if (this.inputVideoElement) {
+      this.inputVideoElement.pause();
+      this.inputVideoElement.srcObject = null;
+      this.inputVideoElement = undefined;
+    }
     if (this.inputMediaStream) {
       this.inputMediaStream.getTracks().forEach((track) => track.stop());
       this.inputMediaStream = undefined;
     }
-    if (this.inputVideoElement) {
-      this.inputVideoElement.srcObject = null;
-      this.inputVideoElement = undefined;
-    }
+    console.log(`[DonjaraTileScanner] stop - Stopped`);
   }
 
   async detect() {
@@ -225,8 +241,14 @@ export class DonjaraTileScanner {
         }
 
         for (const item of classifierResult.predicts) {
+          let identifier = item.className;
+          if (identifier.match(/^(\d+).*$/)) {
+            // 先頭の数字のみにする
+            identifier = RegExp.$1;
+          }
+
           predicts.push({
-            identifier: item.className,
+            identifier: identifier,
             label: item.className,
             pack: 'initial',
             status: 'normal',

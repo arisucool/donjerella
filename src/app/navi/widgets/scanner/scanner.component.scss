@@ -1,3 +1,4 @@
+// アニメーション定義
 @keyframes shutterAnimation {
   0% {
     transform: scaleY(0);
@@ -13,15 +14,33 @@
   }
 }
 
-.camera-control {
+// ボタン
+::ng-deep .mat-mdc-raised-button {
+  color: white !important;
+}
+
+// カメラ領域
+.camera-control-modal {
   display: flex;
+  background: #ffffff88;
+  backdrop-filter: blur(3px);
   flex-direction: column;
   align-items: center;
-  margin-bottom: 2rem;
-  position: relative;
-  max-width: 1000px;
+  justify-content: center;
+  position: fixed;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  box-sizing: border-box;
+  padding: 1rem;
 
   .video-container {
+    position: relative;
+    max-width: 1000px;
+    max-height: 100%;
+
     .camera-preview {
       max-height: 100%;
       max-width: 100%;
@@ -61,38 +80,14 @@
         background-color: #303030;
       }
     }
+    .shutter-button {
+      position: absolute;
+      z-index: 20;
+      border: 0;
+      padding: 0.25rem 1rem;
+      top: calc(50%);
+      margin-top: -18px;
+      right: 1rem;
+    }
   }
-
-  .shutter-button {
-    position: absolute;
-    z-index: 10;
-    border: 0;
-    padding: 0.25rem 1rem;
-    top: calc(50%);
-    margin-top: -18px;
-    right: 1rem;
-  }
-}
-
-.detected-tiles {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: center;
-  margin: 0 -8px;
-  gap: 1rem 0.25rem;
-
-  .tile {
-    width: 80px;
-    height: 100px;
-    background-repeat: no-repeat;
-    background-size: contain;
-    color: white;
-    font-size: 0.8rem;
-    padding: 0.1rem 0.1rem;
-  }
-}
-
-::ng-deep .mat-mdc-raised-button {
-  color: white !important;
 }

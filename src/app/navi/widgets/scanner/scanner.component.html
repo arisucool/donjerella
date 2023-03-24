@@ -1,10 +1,15 @@
-<div
-  class="camera-control"
-  *ngIf="
-    this.previewMediaStream && this.previewMediaStream.getTracks().length > 0
-  "
+<!-- カメラ領域 -->
+<section
+  class="camera-control-modal"
+  *ngIf="this.isShowingCamera"
+  (click)="close()"
 >
-  <div class="video-container">
+  <div
+    class="video-container"
+    *ngIf="
+      this.previewMediaStream && this.previewMediaStream.getTracks().length > 0
+    "
+  >
     <!-- シャッターアニメーション用領域 -->
     <div class="shutter" *ngIf="isTakingPhoto"></div>
     <!---->
@@ -18,30 +23,19 @@
       playsinline
     ></video>
     <!---->
+
+    <!-- シャッターボタン -->
+    <button
+      #shutterButton
+      mat-fab
+      class="shutter-button"
+      color="primary"
+      (click)="detect()"
+      [disabled]="this.isTakingPhoto"
+    >
+      <mat-icon>photo_camera</mat-icon>
+    </button>
+    <!---->
   </div>
-
-  <button
-    mat-fab
-    class="shutter-button"
-    color="primary"
-    (click)="detect()"
-    [disabled]="this.isTakingPhoto"
-  >
-    <mat-icon>photo_camera</mat-icon>
-  </button>
-</div>
-
-<div class="detected-tiles">
-  <ng-container *ngIf="onScanned$ | async as scannerResult">
-    <ng-container *ngFor="let tile of scannerResult.tiles">
-      <div
-        class="tile"
-        [style.background-image]="'url(' + tile.imageDataUrl + ')'"
-      >
-        <span>{{ tile.top.label }}</span>
-        &nbsp;&nbsp;<br />
-        <small>({{ tile.top.score | number : "1.0-2" }})</small>
-      </div>
-    </ng-container>
-  </ng-container>
-</div>
+</section>
+<!---->
