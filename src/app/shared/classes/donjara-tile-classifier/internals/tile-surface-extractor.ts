@@ -85,7 +85,7 @@ export class TileSurfaceExtractor {
     const targetArea = filteredAreas[filteredAreas.length - 1];
 
     // 輪郭を描画
-    const previewMat = new cv.Mat(mat);
+    /*const previewMat = new cv.Mat(mat);
     cv.drawContours(
       previewMat,
       allContours!,
@@ -93,7 +93,7 @@ export class TileSurfaceExtractor {
       new cv.Scalar(0, 0, 255, 255)
     );
     this.showImage(previewMat);
-    previewMat.delete();
+    previewMat.delete();*/
 
     // 射影変換および回転
     const expectedWidth = 240;

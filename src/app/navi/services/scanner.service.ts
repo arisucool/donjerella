@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { DonjaraTileClassifier } from 'src/app/shared/classes/donjara-tile-classifier/donjara-tile-classifier';
+import { DonjaraTileScanner } from 'src/app/shared/classes/donjara-tile-classifier/donjara-tile-scanner';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ClassifierService {
-  private classifier = new DonjaraTileClassifier({
+export class ScannerService {
+  private classifier = new DonjaraTileScanner({
     modelBaseUrl: environment.modelBaseUrl,
   });
 
@@ -20,12 +20,16 @@ export class ClassifierService {
     return this.classifier.getPreviewMediaStream();
   }
 
-  public get onClassified$() {
-    return this.classifier.onClassified$;
+  public get onScanned$() {
+    return this.classifier.onScanned$;
   }
 
   async start() {
     return this.classifier.start();
+  }
+
+  async detect() {
+    return this.classifier.detect();
   }
 
   async stop() {

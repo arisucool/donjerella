@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Subscription } from 'rxjs';
-import { ClassifierService } from '../../services/classifier.service';
+import { ScannerService } from '../../services/scanner.service';
 
 @Component({
   selector: 'app-classifier',
@@ -10,21 +9,20 @@ import { ClassifierService } from '../../services/classifier.service';
 })
 export class ClassifierComponent implements OnInit, OnDestroy {
   public previewMediaStream?: MediaStream;
-  public onClassified$ = this.classifierService.onClassified$;
+  public onScanned$ = this.scannerService.onScanned$;
 
   constructor(
-    public classifierService: ClassifierService,
+    public scannerService: ScannerService,
     public snackBar: MatSnackBar
   ) {}
 
   async ngOnInit() {
     try {
-      await this.classifierService.initialize();
+      await this.scannerService.initialize();
       window.setTimeout(() => {
-        this.previewMediaStream =
-          this.classifierService.getCameraPreviewStream();
+        this.previewMediaStream = this.scannerService.getCameraPreviewStream();
       }, 1000);
-      await this.classifierService.start();
+      await this.scannerService.start();
     } catch (e: any) {
       console.error(e);
       this.snackBar.open(`エラー: ${e.message}`);
@@ -32,4 +30,8 @@ export class ClassifierComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {}
+
+  detect() {
+    return this.scannerService.detect();
+  }
 }

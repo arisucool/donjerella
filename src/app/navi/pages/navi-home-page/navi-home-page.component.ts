@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ClassifierService } from '../../services/classifier.service';
+import { ScannerService } from '../../services/scanner.service';
 
 @Component({
   selector: 'app-navi-home-page',

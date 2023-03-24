@@ -1,10 +1,7 @@
 import * as tf from '@tensorflow/tfjs';
 import { ClassifierHelper } from './classifier-helper';
 
-/**
- * ドンジャラのパイ検出器
- */
-export interface TileDetectorResult {
+export interface TileDetectorResultItem {
   className: 'tile';
   x: number;
   y: number;
@@ -14,6 +11,14 @@ export interface TileDetectorResult {
   image: HTMLCanvasElement;
 }
 
+export interface TileDetectorResult {
+  preview: HTMLCanvasElement;
+  tiles: TileDetectorResultItem[];
+}
+
+/**
+ * ドンジャラのパイ検出器
+ */
 export class TileDetector {
   static readonly MINIMUM_SCORE = 0.4;
 
@@ -44,9 +49,7 @@ export class TileDetector {
     );
   }
 
-  async detect(
-    inputFrame: HTMLCanvasElement
-  ): Promise<{ preview: HTMLCanvasElement; tiles: TileDetectorResult[] }> {
+  async detect(inputFrame: HTMLCanvasElement): Promise<TileDetectorResult> {
     if (!this.model) throw new Error('Model is not loaded yet');
 
     this.canvas.width = inputFrame.width;
@@ -102,8 +105,8 @@ export class TileDetector {
     scores: Float32Array,
     classIndexes: Float32Array,
     numOfDetections: number
-  ) {
-    const detectedTiles: TileDetectorResult[] = [];
+  ): TileDetectorResultItem[] {
+    const detectedTiles: TileDetectorResultItem[] = [];
     for (let i = 0; i < numOfDetections; i++) {
       let [x1, y1, x2, y2] = boxes.slice(i * 4, (i + 1) * 4);
       x1 *= image.width;
@@ -148,7 +151,7 @@ export class TileDetector {
 
   private drawPreview(
     canvas: HTMLCanvasElement,
-    detectedTiles: TileDetectorResult[]
+    detectedTiles: TileDetectorResultItem[]
   ) {
     const ctx = canvas.getContext('2d')!;
 
