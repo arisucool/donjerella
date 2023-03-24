@@ -15,10 +15,10 @@
       </ng-container>
       <ng-container *ngIf="status === 'ready'">
         <ng-container *ngIf="numOfDetections === 0">
-          手牌を一列に写してください
+          すべての手牌が収まる限界まで近づいてください
         </ng-container>
         <ng-container *ngIf="numOfDetections > 0">
-          そのまま シャッターボタンを押してください
+          静止してシャッターボタンを押してください
         </ng-container>
       </ng-container>
       <ng-container *ngIf="status === 'processing'">
