@@ -158,8 +158,8 @@ export class ScannerComponent implements OnInit, OnDestroy {
     try {
       stream = await navigator.mediaDevices.getUserMedia({
         video: {
-          width: 800,
-          facingMode: 'user',
+          width: { ideal: 1280 },
+          facingMode: 'environment',
         },
         audio: false,
       });
@@ -239,7 +239,7 @@ export class ScannerComponent implements OnInit, OnDestroy {
   private onFatalError(e: any) {
     this.status = 'error';
     console.error(e);
-    const mes = this.snackBar.open(`エラー: ${e.message}`, 'OK');
+    const mes = this.snackBar.open(`エラー: ${e.message}`, '再読み込み');
     mes.onAction().subscribe(() => {
       mes.dismiss();
       window.location.reload();
