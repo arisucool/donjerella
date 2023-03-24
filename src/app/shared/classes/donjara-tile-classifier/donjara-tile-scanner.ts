@@ -21,9 +21,18 @@ export interface DonjaraTileScannerResult {
 
 export class DonjaraTileScanner {
   // 入力映像
+  static readonly DEFAULT_CAMERA_WIDTH = 1280;
+  static readonly DEFAULT_CAMERA_HEIGHT = 720;
   static readonly DEFAULT_MEDIA_STREAM_CONSTRAINTS: MediaStreamConstraints = {
     video: {
       facingMode: 'environment',
+      width: DonjaraTileScanner.DEFAULT_CAMERA_WIDTH,
+      height: DonjaraTileScanner.DEFAULT_CAMERA_HEIGHT,
+      aspectRatio: {
+        exact:
+          DonjaraTileScanner.DEFAULT_CAMERA_WIDTH /
+          DonjaraTileScanner.DEFAULT_CAMERA_HEIGHT,
+      },
     },
     audio: false,
   };
@@ -242,7 +251,7 @@ export class DonjaraTileScanner {
     }
     console.log(`[DonjaraTileClassifier] classify`, classifiedFrames);
 
-    // 列ごとにパイを集計
+    // 列ごとにパイを集計 ＆ スコアが低いものはフィルタ
     const classifiedTilesByColumns: {
       top: DonjaraTileScannerResultItem;
       predicts: DonjaraTileScannerResultItem[];
@@ -259,6 +268,12 @@ export class DonjaraTileScanner {
         if (!classifiedTilesByColumns[columnIndex]) {
           classifiedTilesByColumns[columnIndex] = [];
         }
+
+        if (classifiedColumn.top.score < 0.5) {
+          // スコアが 0.5 未満のものは無視
+          continue;
+        }
+
         classifiedTilesByColumns[columnIndex].push(classifiedColumn);
       }
     }
