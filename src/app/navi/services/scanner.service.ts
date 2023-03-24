@@ -34,20 +34,16 @@ export class ScannerService {
     return this.classifier.onScanned$;
   }
 
-  async startCamera() {
-    return this.classifier.startCamera();
+  public get onDetectionStatusChanged$() {
+    return this.classifier.onDetectionStatusChanged$;
   }
 
-  async startLoop() {
-    return this.classifier.startLoop();
+  async onVideoFrame(videoElement: HTMLVideoElement) {
+    await this.classifier.onVideoFrame(videoElement);
   }
 
   async detect() {
     return this.classifier.detect();
-  }
-
-  async stopLoop() {
-    return this.classifier.stopLoop();
   }
 
   async getCgTilesByScannerResult(

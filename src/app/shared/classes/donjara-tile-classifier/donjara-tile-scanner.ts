@@ -20,25 +20,6 @@ export interface DonjaraTileScannerResult {
 }
 
 export class DonjaraTileScanner {
-  // 入力映像
-  static readonly DEFAULT_CAMERA_WIDTH = 1280;
-  static readonly DEFAULT_CAMERA_HEIGHT = 720;
-  static readonly DEFAULT_MEDIA_STREAM_CONSTRAINTS: MediaStreamConstraints = {
-    video: {
-      facingMode: 'environment',
-      width: DonjaraTileScanner.DEFAULT_CAMERA_WIDTH,
-      height: DonjaraTileScanner.DEFAULT_CAMERA_HEIGHT,
-      aspectRatio: {
-        exact:
-          DonjaraTileScanner.DEFAULT_CAMERA_WIDTH /
-          DonjaraTileScanner.DEFAULT_CAMERA_HEIGHT,
-      },
-    },
-    audio: false,
-  };
-  private inputMediaStream: MediaStream | undefined;
-  private inputVideoElement: HTMLVideoElement | undefined;
-
   // 入力映像からフレームを抽出するためのキャンバス
   private inputFrameCanvas: HTMLCanvasElement | undefined;
   private inputFrameCanvasContext: CanvasRenderingContext2D | undefined;
@@ -48,7 +29,12 @@ export class DonjaraTileScanner {
   private previewCanvasContext: CanvasRenderingContext2D | undefined;
   private previewMediaStream: MediaStream | undefined;
 
-  // 検出結果を返すためのイベント
+  // オブジェクト検出の状態変化を伝えるためのイベント
+  private onDetectionStatusChanged = new Subject<number>();
+  public onDetectionStatusChanged$ =
+    this.onDetectionStatusChanged.asObservable();
+
+  // 分類結果を返すためのイベント
   private onScanned = new Subject<DonjaraTileScannerResult>();
   public onScanned$ = this.onScanned.asObservable();
 
@@ -57,7 +43,7 @@ export class DonjaraTileScanner {
 
   // オブジェクト検出器による最近の検出結果 (検出済みであるが未分類のもの)
   private recentTileDetectorResults: TileDetectorResult[] = [];
-  private readonly NUM_OF_RECENT_TILE_DETECTOR_RESULTS = 10;
+  private readonly NUM_OF_RECENT_TILE_DETECTOR_RESULTS = 5;
 
   // パイの表面領域の抽出器
   private tileSurfaceExtractor!: TileSurfaceExtractor;
@@ -110,6 +96,7 @@ export class DonjaraTileScanner {
     // モデルの読み込み
     await this.tileDetector.loadModel();
     await this.tileClassifier.loadModel();
+    console.log(`[DonjaraTileClassifier] model loaded`);
 
     // ウォームアップ
     await this.tileDetector.detect(this.inputFrameCanvas);
@@ -120,51 +107,70 @@ export class DonjaraTileScanner {
     return this.previewMediaStream;
   }
 
-  async startCamera(
-    constraints: MediaStreamConstraints = DonjaraTileScanner.DEFAULT_MEDIA_STREAM_CONSTRAINTS
-  ) {
-    if (this.inputMediaStream) {
+  async onVideoFrame(videoElement: HTMLVideoElement) {
+    if (
+      !videoElement ||
+      !this.inputFrameCanvasContext ||
+      !this.inputFrameCanvas ||
+      !this.previewCanvas ||
+      !this.previewCanvasContext ||
+      videoElement.videoWidth === 0 ||
+      videoElement.videoHeight === 0 ||
+      !this.tileDetector ||
+      this.tileDetector.isReady() === false
+    ) {
       return;
     }
-    this.inputMediaStream = await navigator.mediaDevices.getUserMedia(
-      constraints
-    );
-    if (!this.inputMediaStream) {
-      throw new Error('Failed to get media stream');
-    }
-  }
 
-  async startLoop() {
-    if (!this.inputMediaStream) {
-      await this.startCamera();
-    }
+    try {
+      // 入力映像からフレームを抽出
+      this.inputFrameCanvas.width = videoElement.videoWidth;
+      this.inputFrameCanvas.height = videoElement.videoHeight;
+      this.inputFrameCanvasContext.drawImage(
+        videoElement,
+        0,
+        0,
+        this.inputFrameCanvas.width,
+        this.inputFrameCanvas.height
+      );
 
-    this.inputVideoElement = document.createElement('video');
-    this.inputVideoElement.srcObject = this.inputMediaStream!;
-    await this.inputVideoElement.play();
-    console.log(`[DonjaraTileScanner] start - Started`);
+      // パイを検出
+      const tileDetectorResult = await this.tileDetector.detect(
+        this.inputFrameCanvas
+      );
+      if (!tileDetectorResult) {
+        this.onDetectionStatusChanged.next(0);
+        return;
+      }
+      this.onDetectionStatusChanged.next(tileDetectorResult.tiles.length);
+      let previewImage = tileDetectorResult.preview;
 
-    await this.tick();
-  }
+      // 検出結果の配列へ追加
+      this.recentTileDetectorResults.push(tileDetectorResult);
+      while (
+        this.recentTileDetectorResults.length >
+        this.NUM_OF_RECENT_TILE_DETECTOR_RESULTS
+      ) {
+        this.recentTileDetectorResults.shift();
+      }
 
-  stopLoop() {
-    if (this.inputVideoElement) {
-      this.inputVideoElement.pause();
-      this.inputVideoElement.srcObject = null;
-      this.inputVideoElement = undefined;
+      // プレビュー映像を描画
+      this.previewCanvas.width = tileDetectorResult.preview.width;
+      this.previewCanvas.height = tileDetectorResult.preview.height;
+      this.previewCanvasContext.drawImage(
+        previewImage!,
+        0,
+        0,
+        this.previewCanvas.width,
+        this.previewCanvas.height
+      );
+    } catch (e) {
+      console.error(`[DonjaraTileClassifier] tick`, e);
+      return;
     }
-    if (this.inputMediaStream) {
-      this.inputMediaStream.getTracks().forEach((track) => track.stop());
-      this.inputMediaStream = undefined;
-    }
-    console.log(`[DonjaraTileScanner] stop - Stopped`);
   }
 
   async detect() {
-    if (!this.inputVideoElement || !this.inputMediaStream) {
-      throw new Error('Not started');
-    }
-
     console.log(
       `[DonjaraTileClassifier] detect - Detecting from ${this.recentTileDetectorResults.length} frames...`
     );
@@ -374,76 +380,5 @@ export class DonjaraTileScanner {
     this.onScanned.next(finalResult);
 
     return finalResult;
-  }
-
-  private async tick() {
-    if (
-      !this.inputVideoElement ||
-      !this.inputFrameCanvasContext ||
-      !this.inputMediaStream ||
-      !this.inputFrameCanvas ||
-      !this.previewCanvas ||
-      !this.previewCanvasContext
-    )
-      return;
-
-    if (
-      this.inputVideoElement.videoWidth === 0 ||
-      this.inputVideoElement.videoHeight === 0
-    ) {
-      requestAnimationFrame(async () => {
-        await this.tick();
-      });
-      return;
-    }
-
-    try {
-      // 入力映像からフレームを抽出
-      this.inputFrameCanvas.width = this.inputVideoElement.videoWidth;
-      this.inputFrameCanvas.height = this.inputVideoElement.videoHeight;
-      this.inputFrameCanvasContext.drawImage(
-        this.inputVideoElement,
-        0,
-        0,
-        this.inputFrameCanvas.width,
-        this.inputFrameCanvas.height
-      );
-
-      // パイを検出
-      const tileDetectorResult = await this.tileDetector.detect(
-        this.inputFrameCanvas
-      );
-      if (!tileDetectorResult) {
-        return;
-      }
-      let previewImage = tileDetectorResult.preview;
-
-      // 検出結果の配列へ追加
-      this.recentTileDetectorResults.push(tileDetectorResult);
-      while (
-        this.recentTileDetectorResults.length >
-        this.NUM_OF_RECENT_TILE_DETECTOR_RESULTS
-      ) {
-        this.recentTileDetectorResults.shift();
-      }
-
-      // プレビュー映像を描画
-      this.previewCanvas.width = tileDetectorResult.preview.width;
-      this.previewCanvas.height = tileDetectorResult.preview.height;
-      this.previewCanvasContext.drawImage(
-        previewImage!,
-        0,
-        0,
-        this.previewCanvas.width,
-        this.previewCanvas.height
-      );
-    } catch (e) {
-      console.error(`[DonjaraTileClassifier] tick`, e);
-      return;
-    }
-
-    requestAnimationFrame(async () => {
-      await this.tick();
-    });
   }
 }

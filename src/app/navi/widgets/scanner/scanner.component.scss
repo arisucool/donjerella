@@ -22,8 +22,6 @@
 // カメラ領域
 .camera-control-modal {
   display: flex;
-  background: #ffffff88;
-  backdrop-filter: blur(3px);
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -35,17 +33,46 @@
   bottom: 0;
   box-sizing: border-box;
   padding: 1rem;
+  pointer-events: none;
+
+  .modal-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #ffffff88;
+    backdrop-filter: blur(3px);
+    z-index: -1;
+    pointer-events: all;
+  }
 
   .video-container {
     position: relative;
     max-width: 1000px;
     max-height: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    z-index: 1;
+
+    .message {
+      background-color: #fefefeaa;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #333333;
+      font-size: 1rem;
+      padding: 1rem 1rem;
+    }
 
     .camera-preview {
       max-height: 100%;
       max-width: 100%;
       width: fit-content;
-      border-radius: 8px;
     }
 
     .shutter {
@@ -82,12 +109,13 @@
     }
     .shutter-button {
       position: absolute;
-      z-index: 20;
+      z-index: 25;
       border: 0;
       padding: 0.25rem 1rem;
       top: calc(50%);
       margin-top: -18px;
       right: 1rem;
+      pointer-events: all;
     }
   }
 }

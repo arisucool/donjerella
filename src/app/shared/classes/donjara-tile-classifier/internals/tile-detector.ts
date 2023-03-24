@@ -49,6 +49,10 @@ export class TileDetector {
     );
   }
 
+  isReady() {
+    return this.model !== undefined;
+  }
+
   async detect(inputFrame: HTMLCanvasElement): Promise<TileDetectorResult> {
     if (!this.model) throw new Error('Model is not loaded yet');
 

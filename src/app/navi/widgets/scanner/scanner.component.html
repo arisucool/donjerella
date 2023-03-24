@@ -1,23 +1,45 @@
 <!-- カメラ領域 -->
-<section
-  class="camera-control-modal"
-  *ngIf="this.isShowingCamera"
-  (click)="close()"
->
-  <div
-    class="video-container"
-    *ngIf="
-      this.previewMediaStream && this.previewMediaStream.getTracks().length > 0
-    "
-  >
+<section class="camera-control-modal">
+  <div class="video-container">
+    <!-- モーダル領域 -->
+    <div class="modal-background" (click)="close()"></div>
+
     <!-- シャッターアニメーション用領域 -->
-    <div class="shutter" *ngIf="isTakingPhoto"></div>
+    <div class="shutter" *ngIf="status === 'processing'"></div>
     <!---->
+
+    <!-- メッセージ領域 -->
+    <div class="message">
+      <ng-container *ngIf="status === 'initializing'">
+        しばらくお待ちください...
+      </ng-container>
+      <ng-container *ngIf="status === 'ready'">
+        <ng-container *ngIf="numOfDetections === 0">
+          手牌を一列に写してください
+        </ng-container>
+        <ng-container *ngIf="numOfDetections > 0">
+          そのまま シャッターボタンを押してください
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="status === 'processing'">
+        検索しています...
+      </ng-container>
+    </div>
 
     <!-- カメラ映像領域 -->
     <video
+      #cameraVideo
+      [srcObject]="this.cameraVideoStream"
+      [style.display]="this.previewMediaStream ? 'none' : 'block'"
+      class="camera-preview"
+      autoplay
+      muted
+      playsinline
+    ></video>
+    <video
       class="camera-preview"
       [srcObject]="this.previewMediaStream"
+      [style.display]="!this.previewMediaStream ? 'none' : 'block'"
       autoplay
       muted
       playsinline
@@ -30,8 +52,8 @@
       mat-fab
       class="shutter-button"
       color="primary"
-      (click)="detect()"
-      [disabled]="this.isTakingPhoto"
+      (click)="onClickShutterButton()"
+      [disabled]="status !== 'ready'"
     >
       <mat-icon>photo_camera</mat-icon>
     </button>
