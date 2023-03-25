@@ -53,6 +53,7 @@
       mat-fab
       class="shutter-button"
       color="primary"
+      *ngIf="status !== 'initializing'"
       (click)="onClickShutterButton()"
       [disabled]="status !== 'ready'"
     >
