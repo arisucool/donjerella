@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "cg-donjara-navi": {
+    "donjerella": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -64,10 +64,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "cg-donjara-navi:build:production"
+              "browserTarget": "donjerella:build:production"
             },
             "development": {
-              "browserTarget": "cg-donjara-navi:build:development"
+              "browserTarget": "donjerella:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -75,7 +75,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "cg-donjara-navi:build"
+            "browserTarget": "donjerella:build"
           }
         },
         "test": {
