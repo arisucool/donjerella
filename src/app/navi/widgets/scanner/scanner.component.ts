@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { DeviceDetectorService } from 'ngx-device-detector';
 import { interval, Subscription, timer } from 'rxjs';
 import { DonjaraTileScannerResult } from 'src/app/shared/classes/donjara-tile-classifier/donjara-tile-scanner';
 import { ScannerService } from '../../services/scanner.service';
@@ -57,11 +58,28 @@ export class ScannerComponent implements OnInit, OnDestroy {
 
   constructor(
     public scannerService: ScannerService,
-    public snackBar: MatSnackBar
+    public snackBar: MatSnackBar,
+    private deviceService: DeviceDetectorService
   ) {}
 
   async ngOnInit() {
-    this.initialize();
+    this.status = 'initializing';
+
+    if (this.deviceService.isDesktop()) {
+      this.snackBar.open(
+        '注意: 本機能はスマートフォンでのご利用を推奨します',
+        undefined,
+        {
+          duration: 3000,
+        }
+      );
+
+      timer(3000).subscribe(() => {
+        this.initialize();
+      });
+    } else {
+      this.initialize();
+    }
   }
 
   ngOnDestroy() {
