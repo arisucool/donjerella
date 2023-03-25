@@ -543,6 +543,9 @@ Apache-2.0
    limitations under the License.
 
 
+ngx-device-detector
+MIT
+
 opencv-ts
 MIT
                                  Apache License
