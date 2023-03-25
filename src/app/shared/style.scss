@@ -1,0 +1,112 @@
+// テキストの改行
+
+.wbr {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+// 見出し
+
+h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+}
+
+h4 {
+  font-size: 0.9rem;
+  margin: 0 0 0 0;
+}
+
+// リンク
+
+a:not([mat-stroked-button], [mat-raised-button]) {
+  word-wrap: break-word;
+  color: #4d75c2;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    opacity: 0.7;
+  }
+
+  .app-card {
+    color: #333333;
+  }
+}
+
+// カード
+
+.app-card {
+  box-sizing: border-box;
+  width: 90vw;
+  max-width: 800px;
+  padding: 1.2rem 0;
+  position: relative;
+  background-color: #ffffff;
+  border-radius: 10px;
+
+  &.bordered {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  // カード > 本文
+
+  p {
+    font-size: 0.85rem;
+  }
+
+  // カード > リスト
+
+  ul {
+    font-size: 0.85rem;
+    padding-left: 2rem;
+
+    > li {
+      margin: 0.5rem 0 0.8rem 0;
+
+      small {
+        display: inline-block;
+        margin-top: 0.2rem;
+      }
+
+      ul {
+        list-style: square;
+        li {
+          margin: 0.25rem 0 0.5rem 0;
+        }
+      }
+    }
+  }
+}
+
+// ページの概要
+
+.app-page-summary {
+  width: 80vw;
+  text-align: center;
+
+  h2 {
+    color: #555555;
+    font-size: 1.5rem;
+    font-weight: lighter;
+    margin: 0 0 0 0;
+  }
+}
+
+// ページ下部のナビゲーション
+
+.app-bottom-navigation {
+  a {
+    color: #666666;
+    font-size: 0.8rem;
+    text-decoration: none;
+    margin-left: -1.5rem;
+
+    mat-icon {
+      color: #bddbfd;
+      margin-bottom: 3px;
+      vertical-align: middle;
+    }
+  }
+}

@@ -8,7 +8,7 @@ import { ScannerService } from '../../services/scanner.service';
 @Component({
   selector: 'app-navi-home-page',
   templateUrl: './navi-home-page.component.html',
-  styleUrls: ['./navi-home-page.component.scss'],
+  styleUrls: ['../../../shared/style.scss', './navi-home-page.component.scss'],
 })
 export class NaviHomePageComponent implements OnInit {
   // 最新の認識結果
