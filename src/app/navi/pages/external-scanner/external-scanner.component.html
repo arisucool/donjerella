@@ -1,0 +1,13 @@
+<!-- 警告メッセージ領域 -->
+<div *ngIf="isParentChecked !== undefined && isParentChecked === false">
+  エラー: 不正な呼び出しです
+</div>
+<!---->
+
+<!-- スキャナ領域 -->
+<app-scanner
+  *ngIf="isParentChecked !== undefined && isParentChecked === true"
+  (onScanned)="onScanned($event)"
+  (onDismissed)="onScannerDismissed()"
+></app-scanner>
+<!---->
