@@ -25,20 +25,32 @@
 <!---->
 
 <!-- 手牌一覧領域 -->
-<section class="hold-tiles">
-  <ng-container *ngIf="holdTiles">
-    <ng-container *ngFor="let tile of holdTiles">
-      <article
-        class="tile hold-tile"
-        [matTooltip]="'(検出スコア: ' + tile.score + ')'"
-      >
-        <img class="tile-image" [src]="tile.imageUrl" />
-        <div class="tile-label">
-          <span>{{ tile.label }}</span>
-        </div>
-      </article>
+<section class="hold-tiles-container">
+  <p class="caption" *ngIf="selectedHoldTile === undefined">
+    牌をタップすると、ユニット候補を表示します:
+  </p>
+
+  <div class="hold-tiles">
+    <ng-container *ngIf="holdTiles">
+      <ng-container *ngFor="let tile of holdTiles">
+        <article
+          class="tile hold-tile selected"
+          [ngClass]="{
+            selected:
+              selectedHoldTile &&
+              selectedHoldTile.identifier === tile.identifier
+          }"
+          [matTooltip]="'(検出スコア: ' + tile.score + ')'"
+          (click)="onHoldTileSelect(tile)"
+        >
+          <img class="tile-image" [src]="tile.imageUrl" />
+          <div class="tile-label">
+            <span>{{ tile.label }}</span>
+          </div>
+        </article>
+      </ng-container>
     </ng-container>
-  </ng-container>
+  </div>
 </section>
 <!---->
 
@@ -68,7 +80,7 @@
 </section>
 <!---->
 
-<p style="color: #555555; font-size: 0.75rem; margin: 2rem 0.25rem 0 0.25rem">
+<p style="color: #555555; font-size: 0.75rem; margin: 1rem 0.25rem 0 0.25rem">
   "ドンジャラNEO アイドルマスターシンデレラガールズ"
   をさらに楽しむための非公式ガイドサービスです。<br />
   株式会社バンダイナムコエンターテインメント様、株式会社バンダイ様、株式会社Cygames様などとは一切関係ございません。<br />

@@ -10,6 +10,17 @@ import { TileDatabaseService } from './tile-database.service';
 export class NaviService {
   constructor(private tileDatabaseService: TileDatabaseService) {}
 
+  async getRecommendedUnits(
+    selectedTile: CgDonjaraTile,
+    holdTiles: CgDonjaraTile[]
+  ) {
+    let units = await this.getRecommendedUnitsByHoldTiles(holdTiles);
+    units = units.filter((u) =>
+      u.tiles!.some((t) => t.identifier === selectedTile.identifier)
+    );
+    return units;
+  }
+
   async getRecommendedUnitsByHoldTiles(
     holdTiles: CgDonjaraTile[]
   ): Promise<CgUnit[]> {

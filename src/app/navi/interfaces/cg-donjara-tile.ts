@@ -1,4 +1,4 @@
-import { DonjaraTileScannerResultItem } from 'src/app/shared/classes/donjara-tile-classifier/donjara-tile-scanner';
+import { DonjaraTileScannerResultItem } from 'src/app/shared/classes/donjara-tile-scanner/donjara-tile-scanner';
 
 export interface CgDonjaraTile extends DonjaraTileScannerResultItem {
   // 牌の画像

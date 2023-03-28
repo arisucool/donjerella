@@ -3,7 +3,7 @@ import {
   DonjaraTileScanner,
   DonjaraTileScannerResult,
   DonjaraTileScannerResultItem,
-} from 'src/app/shared/classes/donjara-tile-classifier/donjara-tile-scanner';
+} from 'src/app/shared/classes/donjara-tile-scanner/donjara-tile-scanner';
 import { environment } from 'src/environments/environment';
 import { CgDonjaraTile } from '../interfaces/cg-donjara-tile';
 import { NaviService } from './navi.service';
@@ -62,7 +62,16 @@ export class ScannerService {
   }
 
   async getExampleResult(): Promise<DonjaraTileScannerResult> {
-    const EXAMPLE_TILE_IDENTIFIERS = ['0087'];
+    const EXAMPLE_TILE_IDENTIFIERS = [
+      '0087',
+      '0015',
+      '0155',
+      '0104',
+      '0124',
+      '0140',
+      '0024',
+      '0060',
+    ];
 
     let result: DonjaraTileScannerResult = {
       tiles: [],

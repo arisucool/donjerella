@@ -10,8 +10,8 @@ import {
 import { MatButton } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DeviceDetectorService } from 'ngx-device-detector';
-import { interval, Subscription, timer } from 'rxjs';
-import { DonjaraTileScannerResult } from 'src/app/shared/classes/donjara-tile-classifier/donjara-tile-scanner';
+import { Subscription, timer } from 'rxjs';
+import { DonjaraTileScannerResult } from 'src/app/shared/classes/donjara-tile-scanner/donjara-tile-scanner';
 import { ScannerService } from '../../services/scanner.service';
 
 @Component({

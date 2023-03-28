@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import {
   DonjaraTileScannerResult,
   DonjaraTileScannerResultItem,
-} from 'src/app/shared/classes/donjara-tile-classifier/donjara-tile-scanner';
+} from 'src/app/shared/classes/donjara-tile-scanner/donjara-tile-scanner';
 
 @Component({
   selector: 'app-external-scanner',
