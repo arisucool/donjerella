@@ -17,7 +17,7 @@ export class ExternalScannerComponent implements OnInit {
 
   ngOnInit() {
     // 呼出元の確認
-    this.isParentChecked = !this.checkParent();
+    this.isParentChecked = this.checkParent();
   }
 
   onScanned(event: DonjaraTileScannerResult) {
@@ -41,10 +41,13 @@ export class ExternalScannerComponent implements OnInit {
   }
 
   private sendMessageToParent(type: string, data?: any) {
-    window.parent.postMessage({
-      app: 'cgDonjaraScanner',
-      type: type,
-      ...data,
-    });
+    window.parent.postMessage(
+      {
+        app: 'cgDonjaraScanner',
+        type: type,
+        ...data,
+      },
+      '*'
+    );
   }
 }
