@@ -26,15 +26,17 @@
 
 <!-- 手牌一覧領域 -->
 <section class="hold-tiles-container">
+  <!-- 説明 -->
   <p class="caption" *ngIf="selectedHoldTile === undefined">
     牌をタップすると、ユニット候補を表示します...
   </p>
+  <!---->
 
   <div class="hold-tiles">
     <ng-container *ngIf="holdTiles">
       <ng-container *ngFor="let tile of holdTiles">
         <article
-          class="tile hold-tile selected"
+          class="tile hold-tile"
           [ngClass]="{
             selected:
               selectedHoldTile &&
@@ -42,14 +44,49 @@
           }"
           (click)="onHoldTileSelect(tile)"
         >
+          <!-- ラベル -->
           <div class="tile-label">
             <span>{{ tile.label }}</span>
           </div>
+          <!---->
+
+          <!-- 手牌の操作ボタン (上部) -->
+          <div class="tile-actions tile-top-actions">
+            <!-- 手牌の削除ボタン -->
+            <button
+              (click)="removeHoldTile(tile)"
+              mat-button
+              matTooltip="牌を捨てる: {{ tile.label }}"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+            <!---->
+          </div>
+          <!---->
+
+          <!-- 牌の画像 -->
           <img
             class="tile-image"
             [src]="tile.imageUrl"
             [matTooltip]="'(検出スコア: ' + tile.score + ')'"
           />
+          <!---->
+
+          <!-- 手牌の操作ボタン (下部) -->
+          <div class="tile-actions tile-bottom-actions">
+            <!-- 誤認識の修正ボタン -->
+            <button
+              (click)="fixWrongHoldTile(tile)"
+              mat-button
+              matTooltip="誤認識を修正: {{ tile.label }}"
+            >
+              <mat-icon>error_outline</mat-icon>
+            </button>
+            <!---->
+          </div>
+          <!---->
+
+          <!-- グルーピング -->
           <div class="tile-group-labels">
             <ng-container *ngIf="tile.suggestedGroup">
               <div
@@ -60,10 +97,34 @@
                 {{ tile.suggestedGroup.groupingLabel }}
               </div>
             </ng-container>
+            <ng-container *ngIf="!tile.suggestedGroup">
+              <div
+                class="tile-group-label"
+                [style.backgroundColor]="'#ffffff00'"
+              >
+                &nbsp;
+              </div>
+            </ng-container>
           </div>
+          <!---->
         </article>
       </ng-container>
     </ng-container>
+
+    <!-- 手牌の追加ボタン -->
+    <button
+      (click)="addHoldTile()"
+      mat-button
+      class="tile hold-tile add-tile-button"
+      matTooltip="手牌を追加"
+    >
+      <mat-icon>add_circle</mat-icon>
+      <img
+        class="tile-image"
+        src="https://arisucool.github.io/cg-donjara-tile-detection/tile-images/0087.png"
+      />
+    </button>
+    <!---->
   </div>
 </section>
 <!---->

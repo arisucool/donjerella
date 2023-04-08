@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { DonjaraTileScannerResult } from 'src/app/shared/classes/donjara-tile-scanner/donjara-tile-scanner';
 import {
   CgDonjaraHoldTile,
@@ -26,7 +27,8 @@ export class NaviHomePageComponent implements OnInit {
 
   constructor(
     private naviService: NaviService,
-    private scannerService: ScannerService
+    private scannerService: ScannerService,
+    private snackBar: MatSnackBar
   ) {}
 
   async ngOnInit() {
@@ -62,6 +64,33 @@ export class NaviHomePageComponent implements OnInit {
     this.recommendedUnits = await this.naviService.getRecommendedUnits(
       tile,
       this.holdTiles
+    );
+  }
+
+  addHoldTile() {
+    this.snackBar.open(`TODO: 本機能は実装中です`, undefined, {
+      duration: 3000,
+    });
+  }
+
+  fixWrongHoldTile(tile: CgDonjaraTile) {
+    this.snackBar.open(`TODO: 本機能は実装中です`, undefined, {
+      duration: 3000,
+    });
+  }
+
+  removeHoldTile(tile: CgDonjaraTile) {
+    this.holdTiles = this.holdTiles.filter(
+      (t) => t.identifier !== tile.identifier
+    );
+    this.saveSession();
+
+    this.snackBar.open(
+      `手牌から "${tile.label}" の牌を捨てました。新しい牌を追加してください。`,
+      undefined,
+      {
+        duration: 3000,
+      }
     );
   }
 
