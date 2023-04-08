@@ -65,11 +65,21 @@ export class NaviHomePageComponent implements OnInit {
   }
 
   async onHoldTileSelect(tile: CgDonjaraTile) {
+    if (this.selectedHoldTile?.identifier === tile.identifier) {
+      this.resetHoldTileSelect();
+      return;
+    }
+
     this.selectedHoldTile = tile;
     this.recommendedUnits = await this.naviService.getRecommendedUnits(
       tile,
       this.holdTiles
     );
+  }
+
+  resetHoldTileSelect() {
+    this.selectedHoldTile = undefined;
+    this.recommendedUnits = [];
   }
 
   async addHoldTile() {
@@ -92,6 +102,9 @@ export class NaviHomePageComponent implements OnInit {
 
     // 推奨される組み合わせを取得
     this.holdTiles = await this.naviService.groupingHoldTiles(this.holdTiles);
+
+    // 選択を解除
+    this.resetHoldTileSelect();
   }
 
   async fixWrongHoldTile(tile: CgDonjaraTile) {
@@ -118,6 +131,9 @@ export class NaviHomePageComponent implements OnInit {
 
     // 推奨される組み合わせを取得
     this.holdTiles = await this.naviService.groupingHoldTiles(this.holdTiles);
+
+    // 選択を解除
+    this.resetHoldTileSelect();
   }
 
   removeHoldTile(tile: CgDonjaraTile) {
