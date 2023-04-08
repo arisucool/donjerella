@@ -2,9 +2,8 @@ import { Injectable } from '@angular/core';
 import {
   DonjaraTileScanner,
   DonjaraTileScannerResult,
-  DonjaraTileScannerResultItem,
-} from 'src/app/shared/classes/donjara-tile-scanner/donjara-tile-scanner';
-import { environment } from 'src/environments/environment';
+} from '../../shared/classes/donjara-tile-scanner/donjara-tile-scanner';
+import { environment } from '../../../environments/environment';
 import { CgDonjaraTile } from '../interfaces/cg-donjara-tile';
 import { NaviService } from './navi.service';
 import { TileDatabaseService } from './tile-database.service';
@@ -13,37 +12,35 @@ import { TileDatabaseService } from './tile-database.service';
   providedIn: 'root',
 })
 export class ScannerService {
-  private classifier = new DonjaraTileScanner({
-    modelBaseUrl: environment.modelBaseUrl,
-  });
+  private classifier?: DonjaraTileScanner;
 
-  constructor(
-    private naviService: NaviService,
-    private tileDatabaseService: TileDatabaseService
-  ) {}
+  constructor(private tileDatabaseService: TileDatabaseService) {}
 
   async initialize() {
+    this.classifier = new DonjaraTileScanner({
+      modelBaseUrl: environment.modelBaseUrl,
+    });
     await this.classifier.initialize();
   }
 
   public getCameraPreviewStream() {
-    return this.classifier.getPreviewMediaStream();
+    return this.classifier!.getPreviewMediaStream();
   }
 
   public get onScanned$() {
-    return this.classifier.onScanned$;
+    return this.classifier!.onScanned$;
   }
 
   public get onDetectionStatusChanged$() {
-    return this.classifier.onDetectionStatusChanged$;
+    return this.classifier!.onDetectionStatusChanged$;
   }
 
   async onVideoFrame(videoElement: HTMLVideoElement) {
-    await this.classifier.onVideoFrame(videoElement);
+    await this.classifier!.onVideoFrame(videoElement);
   }
 
   async detect() {
-    return this.classifier.detect();
+    return this.classifier!.detect();
   }
 
   async getCgTilesByScannerResult(

@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
+import { environment } from '../../../environments/environment';
 import * as Papa from 'papaparse';
 import { CgDonjaraTile } from '../interfaces/cg-donjara-tile';
 import { CgUnit } from '../interfaces/cg-unit';
+import { HttpClient } from '@angular/common/http';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -14,11 +16,13 @@ export class TileDatabaseService {
   private tiles: CgDonjaraTile[] = [];
   private units: CgUnit[] = [];
 
-  constructor() {}
+  constructor(private http: HttpClient) {}
 
   public async load() {
-    await this.loadTiles();
-    await this.loadUnits();
+    const tiles = await this.fetchTiles();
+    this.tiles = tiles!;
+    const units = await this.fetchUnits();
+    this.units = units!;
   }
 
   async getTileByIdentifier(
@@ -44,18 +48,18 @@ export class TileDatabaseService {
     return this.units;
   }
 
-  private async loadTiles() {
+  public async fetchTiles() {
     const cache = this.getCachedJson(
       'tiles',
       TileDatabaseService.DATABASE_CACHE_EXPIRES
     );
     if (cache) {
-      this.tiles = cache;
-      return;
+      return cache;
     }
 
-    const req = await fetch(environment.tilesCsvUrl);
-    const csv = await req.text();
+    const csv = await lastValueFrom(
+      this.http.get(environment.tilesCsvUrl, { responseType: 'text' })
+    );
     const parsed = Papa.parse(csv, {
       delimiter: ',',
     });
@@ -84,25 +88,25 @@ export class TileDatabaseService {
 
     this.setCachedJson('tiles', tiles);
 
-    this.tiles = tiles;
+    return tiles;
   }
 
   private getTileIdentifierByIdolName(name: string) {
     return this.tiles.find((t) => t.label === name);
   }
 
-  private async loadUnits() {
+  public async fetchUnits() {
     const cache = this.getCachedJson(
       'units',
       TileDatabaseService.DATABASE_CACHE_EXPIRES
     );
     if (cache) {
-      this.units = cache;
-      return;
+      return cache;
     }
 
-    const req = await fetch(environment.unitsCsvUrl);
-    const csv = await req.text();
+    const csv = await lastValueFrom(
+      this.http.get(environment.unitsCsvUrl, { responseType: 'text' })
+    );
     const parsed = Papa.parse(csv, {
       delimiter: ',',
     });
@@ -139,8 +143,7 @@ export class TileDatabaseService {
     }
 
     this.setCachedJson('units', units);
-
-    this.units = units;
+    return units;
   }
 
   private getCachedJson(key: string, expires?: number) {

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CgUnit, CgUnitDefinition } from '../interfaces/cg-unit';
-import { environment } from 'src/environments/environment';
+import { environment } from '../../../environments/environment';
 import {
   CgDonjaraHoldTile,
   CgDonjaraHoldTileGroup,
