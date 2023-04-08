@@ -34,3 +34,33 @@ jobs:
         with:
           branch: gh-pages
           folder: docs/
+
+  # 自動テスト
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+        env:
+          CI: true
+
+      - name: Test app
+        run: |
+          npm test -- --ci --no-cache --reporters=default --reporters=jest-junit
+
+      - name: Upload test report
+        uses: dorny/test-reporter@c9b3d0e2bd2a4e96aaf424dbaa31c46b42318226
+        if: always()
+        with:
+          name: "Test Report"
+          path: "jest-junit.xml"
+          fail-on-error: "true"
+          reporter: "jest-junit"
