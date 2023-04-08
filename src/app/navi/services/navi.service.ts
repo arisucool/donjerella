@@ -14,6 +14,12 @@ import { TileDatabaseService } from './tile-database.service';
 export class NaviService {
   constructor(private tileDatabaseService: TileDatabaseService) {}
 
+  /**
+   * 指定された手牌によるユニットの取得
+   * @param selectedTile 指定された手牌
+   * @param holdTiles すべての手牌
+   * @returns ユニットの配列
+   */
   async getRecommendedUnits(
     selectedTile: CgDonjaraTile,
     holdTiles: CgDonjaraTile[]
@@ -25,8 +31,14 @@ export class NaviService {
     return units;
   }
 
+  /**
+   * 手牌に含まれる牌を持つユニットの取得
+   * @param holdTiles 手牌の配列
+   * @returns ユニットの配列
+   */
   async getRecommendedUnitsByHoldTiles(
-    holdTiles: CgDonjaraTile[]
+    holdTiles: CgDonjaraTile[],
+    removeDuplicatedAssigns: boolean = false
   ): Promise<CgUnit[]> {
     const allUnits: CgUnit[] = await this.tileDatabaseService.getUnits();
     let filteredUnits: CgUnit[] = [];
@@ -120,6 +132,26 @@ export class NaviService {
       }
     });
 
+    // 牌の重複を除去
+    if (removeDuplicatedAssigns) {
+      const usedTileIdentifiers: string[] = [];
+      filteredUnits = filteredUnits.filter((u) => {
+        let isDuplicated = false;
+        for (const tile of u.tiles!) {
+          if (usedTileIdentifiers.includes(tile.identifier)) {
+            isDuplicated = true;
+            break;
+          }
+        }
+        if (!isDuplicated) {
+          for (const tile of u.tiles!) {
+            usedTileIdentifiers.push(tile.identifier);
+          }
+        }
+        return !isDuplicated;
+      });
+    }
+
     // ユニットの配列を返す
     return filteredUnits;
   }
@@ -131,9 +163,14 @@ export class NaviService {
   async groupingHoldTiles(
     cgTiles: CgDonjaraTile[]
   ): Promise<CgDonjaraHoldTile[]> {
-    const suggestedGroups: { [key: string]: CgDonjaraHoldTileGroup } = {};
-    const recommendedUnits = await this.getRecommendedUnitsByHoldTiles(cgTiles);
+    // 手牌を含むユニットを取得
+    const recommendedUnits = await this.getRecommendedUnitsByHoldTiles(
+      cgTiles,
+      true
+    );
 
+    // 手牌を反復
+    const suggestedGroups: { [key: string]: CgDonjaraHoldTileGroup } = {};
     const tiles: CgDonjaraHoldTile[] = [];
     for (const cgTile of cgTiles) {
       // 提案されるユニットを取得
