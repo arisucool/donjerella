@@ -7,6 +7,8 @@ import { CgUnit } from './cg-unit';
 export interface CgDonjaraTile extends DonjaraTileScannerResultItem {
   // 牌の画像
   imageUrl?: string;
+  // アイドルの読みがな
+  idolYomi?: string;
   // アイドルの属性
   idolType: 'cute' | 'cool' | 'passion';
   // アイドルのステータス (Vo, Vi, Da, Al)

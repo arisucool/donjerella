@@ -31,8 +31,8 @@ export class TileSelectorComponent {
   async ngOnInit() {}
 
   async loadTiles() {
-    const tiles = await this.tileDatabaseService.getTiles();
-    this.tiles = tiles.filter((t) => {
+    let tiles = await this.tileDatabaseService.getTiles();
+    tiles = tiles.filter((t) => {
       if (t.idolStatus === 'almighty') return false;
 
       if (
@@ -43,6 +43,14 @@ export class TileSelectorComponent {
 
       return t.idolType === this.requestedType;
     });
+
+    tiles = tiles.sort((a, b) => {
+      const strA = a.idolYomi || a.label;
+      const strB = b.idolYomi || b.label;
+      return strA.localeCompare(strB);
+    });
+
+    this.tiles = tiles;
   }
 
   onSelectType(type: 'cute' | 'cool' | 'passion') {

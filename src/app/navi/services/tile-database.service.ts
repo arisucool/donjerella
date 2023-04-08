@@ -88,6 +88,9 @@ export class TileDatabaseService {
       // 牌のラベルを取得 (例: '橘ありす', 'キュートオールマイティ')
       const label = row[1].trim();
 
+      // アイドルのよみがなを取得
+      const idolYomi = row[2].trim();
+
       // アイドルの属性を抽出
       let idolType: 'cute' | 'cool' | 'passion';
       switch (row[3].trim()) {
@@ -135,6 +138,7 @@ export class TileDatabaseService {
         label: label,
         imageUrl: `${environment.tileImageBaseUrl}/${row[0].trim()}.png`,
         pack: 'initial',
+        idolYomi: idolYomi,
         idolType: idolType,
         idolStatus: idolStatus,
       });
