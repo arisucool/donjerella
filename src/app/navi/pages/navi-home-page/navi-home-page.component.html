@@ -27,7 +27,7 @@
 <!-- 手牌一覧領域 -->
 <section class="hold-tiles-container">
   <p class="caption" *ngIf="selectedHoldTile === undefined">
-    牌をタップすると、ユニット候補を表示します:
+    牌をタップすると、ユニット候補を表示します...
   </p>
 
   <div class="hold-tiles">
@@ -42,14 +42,14 @@
           }"
           (click)="onHoldTileSelect(tile)"
         >
+          <div class="tile-label">
+            <span>{{ tile.label }}</span>
+          </div>
           <img
             class="tile-image"
             [src]="tile.imageUrl"
             [matTooltip]="'(検出スコア: ' + tile.score + ')'"
           />
-          <div class="tile-label">
-            <span>{{ tile.label }}</span>
-          </div>
           <div class="tile-group-labels">
             <ng-container *ngIf="tile.suggestedGroup">
               <div
@@ -82,10 +82,10 @@
           [ngClass]="{ hold: tile.isHold }"
           [matTooltip]="'(検出スコア: ' + tile.score + ')'"
         >
-          <img class="tile-image" [src]="tile.imageUrl" />
           <div class="tile-label">
             <span>{{ tile.label }}</span>
           </div>
+          <img class="tile-image" [src]="tile.imageUrl" />
           <mat-icon class="hold-mark" *ngIf="tile.isHold">done</mat-icon>
         </article>
       </ng-container>
@@ -94,7 +94,7 @@
 </section>
 <!---->
 
-<p style="color: #555555; font-size: 0.75rem; margin: 3rem 0.25rem 0 0.25rem">
+<p style="color: #555555; font-size: 0.75rem; margin: 1rem 0.25rem 0 0.25rem">
   "ドンジャラNEO アイドルマスターシンデレラガールズ"
   をさらに楽しむための非公式ガイドサービスです。<br />
   株式会社バンダイナムコエンターテインメント様、株式会社バンダイ様、株式会社Cygames様などとは一切関係ございません。<br />
