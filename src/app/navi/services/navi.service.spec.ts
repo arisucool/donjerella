@@ -4,6 +4,10 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NaviService } from './navi.service';
 import { ScannerService } from './scanner.service';
 import { TileDatabaseService } from './tile-database.service';
+import {
+  CgDonjaraHoldTile,
+  CgDonjaraTile,
+} from '../interfaces/cg-donjara-tile';
 
 describe('NaviService', () => {
   let tileDatabaseService: TileDatabaseService;
@@ -61,70 +65,80 @@ describe('NaviService', () => {
           label: '橘ありす',
           imageUrl: '',
           pack: 'initial',
-          score: -1,
+          idolType: 'cool',
+          idolStatus: 'visual',
         },
         {
           identifier: '015',
           label: '櫻井桃華',
           imageUrl: '',
           pack: 'initial',
-          score: -1,
+          idolType: 'cute',
+          idolStatus: 'dance',
         },
         {
           identifier: '024',
           label: '遊佐こずえ',
           imageUrl: '',
           pack: 'initial',
-          score: -1,
+          idolType: 'cute',
+          idolStatus: 'visual',
         },
         {
           identifier: '034',
           label: '双葉杏',
           imageUrl: '',
           pack: 'initial',
-          score: -1,
+          idolType: 'cute',
+          idolStatus: 'dance',
         },
         {
           identifier: '060',
           label: '乙倉悠貴',
           imageUrl: '',
           pack: 'initial',
-          score: -1,
+          idolType: 'cute',
+          idolStatus: 'vocal',
         },
         {
           identifier: '104',
           label: '佐城雪美',
           imageUrl: '',
           pack: 'initial',
-          score: -1,
+          idolType: 'cool',
+          idolStatus: 'visual',
         },
         {
           identifier: '124',
           label: '結城晴',
           imageUrl: '',
           pack: 'initial',
-          score: -1,
+          idolType: 'cool',
+          idolStatus: 'dance',
         },
         {
           identifier: '130',
           label: '久川颯',
           imageUrl: '',
           pack: 'initial',
-          score: -1,
+          idolType: 'cool',
+          idolStatus: 'dance',
         },
         {
           identifier: '140',
           label: '赤城みりあ',
           imageUrl: '',
           pack: 'initial',
-          score: -1,
+          idolType: 'passion',
+          idolStatus: 'dance',
         },
         {
           identifier: '155',
           label: '的場梨沙',
           imageUrl: '',
           pack: 'initial',
-          score: -1,
+          idolType: 'passion',
+          idolStatus: 'vocal',
         },
       ])
     );
@@ -148,16 +162,39 @@ describe('NaviService', () => {
   });
 
   it('手牌のグルーピング', async () => {
-    // サンプルの手牌を読み取る
-    const cgTiles = await scannerService.getCgTilesByScannerResult(
-      await scannerService.getExampleResult()
-    );
+    // 手牌を設定
+    const cgTiles = [
+      // 橘ありす
+      await tileDatabaseService.getTileByIdentifier('087'),
+      // 佐城雪美
+      await tileDatabaseService.getTileByIdentifier('104'),
+      // 結城晴
+      await tileDatabaseService.getTileByIdentifier('124'),
+      // 的場梨沙
+      await tileDatabaseService.getTileByIdentifier('155'),
+      // 赤城みりあ
+      await tileDatabaseService.getTileByIdentifier('140'),
+      // 遊佐こずえ
+      await tileDatabaseService.getTileByIdentifier('024'),
+      // 乙倉悠貴
+      await tileDatabaseService.getTileByIdentifier('060'),
+      // 櫻井桃華
+      await tileDatabaseService.getTileByIdentifier('015'),
+    ];
 
     // 手牌をグルーピング
-    const holdTiles = await naviService.groupingHoldTiles(cgTiles);
+    const holdTiles = await naviService.groupingHoldTiles(
+      cgTiles as CgDonjaraTile[]
+    );
+
+    // 検証のため、手牌をアイドルの名前をキーにしてマップに変換
+    const holdTilesMap = holdTiles.reduce((acc, tile) => {
+      acc[tile.label] = tile;
+      return acc;
+    }, {} as { [key: string]: CgDonjaraHoldTile });
 
     // グルーピング結果を検証 - ももぺあべりー
-    expect(holdTiles[0]).toMatchObject({
+    expect(holdTilesMap['橘ありす']).toMatchObject({
       label: '橘ありす',
       suggestedGroup: {
         groupingLabel: 'A',
@@ -166,7 +203,7 @@ describe('NaviService', () => {
         },
       },
     });
-    expect(holdTiles[1]).toMatchObject({
+    expect(holdTilesMap['櫻井桃華']).toMatchObject({
       label: '櫻井桃華',
       suggestedGroup: {
         groupingLabel: 'A',
@@ -175,7 +212,7 @@ describe('NaviService', () => {
         },
       },
     });
-    expect(holdTiles[2]).toMatchObject({
+    expect(holdTilesMap['的場梨沙']).toMatchObject({
       label: '的場梨沙',
       suggestedGroup: {
         groupingLabel: 'A',
@@ -186,7 +223,7 @@ describe('NaviService', () => {
     });
 
     // グルーピング結果を検証 - プチ＊パフェアリー
-    expect(holdTiles[3]).toMatchObject({
+    expect(holdTilesMap['佐城雪美']).toMatchObject({
       label: '佐城雪美',
       suggestedGroup: {
         groupingLabel: 'B',
@@ -195,7 +232,7 @@ describe('NaviService', () => {
         },
       },
     });
-    expect(holdTiles[6]).toMatchObject({
+    expect(holdTilesMap['遊佐こずえ']).toMatchObject({
       label: '遊佐こずえ',
       suggestedGroup: {
         groupingLabel: 'B',
@@ -206,15 +243,15 @@ describe('NaviService', () => {
     });
 
     // グルーピング結果を検証 - 未グルーピング
-    expect(holdTiles[4]).toMatchObject({
+    expect(holdTilesMap['結城晴']).toMatchObject({
       label: '結城晴',
       suggestedGroup: undefined, // 結城晴は "ビートシューター" に含まれるが、的場梨沙がすでに "ももぺあべりー" で使われているため、グルーピングされない
     });
-    expect(holdTiles[5]).toMatchObject({
+    expect(holdTilesMap['赤城みりあ']).toMatchObject({
       label: '赤城みりあ',
       suggestedGroup: undefined,
     });
-    expect(holdTiles[7]).toMatchObject({
+    expect(holdTilesMap['乙倉悠貴']).toMatchObject({
       label: '乙倉悠貴',
       suggestedGroup: undefined, // 乙倉悠貴は "Sola-iris" に含まれるが、他のアイドルが一人も手牌に含まれていないため、グルーピングされない
     });

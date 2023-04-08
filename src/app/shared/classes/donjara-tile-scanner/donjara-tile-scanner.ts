@@ -8,7 +8,7 @@ export interface DonjaraTileScannerResultItem {
   label: string;
   pack: 'initial' | 'expansion';
   status?: 'normal' | 'reached';
-  score: number;
+  score?: number;
 }
 
 export interface DonjaraTileScannerResult {
@@ -295,7 +295,7 @@ export class DonjaraTileScanner {
           classifiedTilesByColumns[columnIndex] = [];
         }
 
-        if (classifiedColumn.top.score < 0.5) {
+        if (classifiedColumn.top.score && classifiedColumn.top.score < 0.5) {
           // スコアが 0.5 未満のものは無視
           continue;
         }

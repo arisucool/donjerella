@@ -71,18 +71,65 @@ export class TileDatabaseService {
 
       if (rowIndex === 0) continue;
 
-      let identifier = row[0];
+      // 識別子を取得
+      let identifier = row[0].trim();
       if (identifier.length === 4) {
         // 0001 → 001 へ変換
         identifier = identifier.substring(1, 4);
       }
 
+      // 牌のラベルを取得 (例: '橘ありす', 'キュートオールマイティ')
+      const label = row[1].trim();
+
+      // アイドルの属性を抽出
+      let idolType: 'cute' | 'cool' | 'passion';
+      switch (row[3].trim()) {
+        case 'キュート':
+          idolType = 'cute';
+          break;
+        case 'クール':
+          idolType = 'cool';
+          break;
+        case 'パッション':
+          idolType = 'passion';
+          break;
+        default:
+          console.warn(
+            `[TileDatabaseService] fetchTiles - Unknown idol type: ${row[3]}`
+          );
+          continue;
+      }
+
+      // アイドルのステータスを抽出
+      let idolStatus: 'vocal' | 'visual' | 'dance' | 'almighty';
+      switch (row[4].trim()) {
+        case 'Vo':
+          idolStatus = 'vocal';
+          break;
+        case 'Vi':
+          idolStatus = 'visual';
+          break;
+        case 'Da':
+          idolStatus = 'dance';
+          break;
+        case 'Al':
+          idolStatus = 'almighty';
+          break;
+        default:
+          console.warn(
+            `[TileDatabaseService] fetchTiles - Unknown idol status: ${row[4]}`
+          );
+          continue;
+      }
+
+      // 配列へ牌を追加
       tiles.push({
         identifier: identifier,
-        label: row[1],
-        imageUrl: `${environment.tileImageBaseUrl}/${row[0]}.png`,
+        label: label,
+        imageUrl: `${environment.tileImageBaseUrl}/${row[0].trim()}.png`,
         pack: 'initial',
-        score: -1,
+        idolType: idolType,
+        idolStatus: idolStatus,
       });
     }
 

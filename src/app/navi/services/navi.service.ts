@@ -73,6 +73,8 @@ export class NaviService {
             label: '不明',
             imageUrl: '',
             pack: 'initial',
+            idolStatus: 'vocal',
+            idolType: 'cute',
             isHold: false,
             score: 0,
           });
