@@ -12,14 +12,19 @@
   width: 96vw;
 }
 
-// スキャナ起動ボタン
-
-.scanner-launch-button {
-  color: #333333 !important;
+// ヘッダの上書き
+.header-overlay {
   position: absolute;
   top: 3px;
-  right: 0.5rem;
-  height: 42px;
+  right: 0;
+
+  // ボタン
+  button {
+    color: #333333 !important;
+    height: 42px;
+    margin-right: 1rem;
+    text-align: center;
+  }
 }
 
 // 共通

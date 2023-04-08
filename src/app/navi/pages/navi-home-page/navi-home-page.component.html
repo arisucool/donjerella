@@ -5,15 +5,28 @@
 </div>
 <!---->
 
-<!-- スキャナ起動ボタン -->
-<button
-  class="scanner-launch-button"
-  mat-raised-button
-  (click)="isLaunchingScanner = true"
->
-  <mat-icon>camera_alt</mat-icon>
-  <span>認識を開始</span>
-</button>
+<!-- ヘッダの上書き -->
+<div class="header-overlay">
+  <!-- 並び替えボタン -->
+  <button
+    (click)="sortHoldTiles()"
+    mat-raised-button
+    matTooltip="手牌をおすすめ順に並び替え"
+  >
+    <mat-icon style="margin: 0 0 0 0">sync_alt</mat-icon>
+  </button>
+  <!---->
+
+  <!-- スキャナ起動ボタン -->
+  <button
+    class="scanner-launch-button"
+    mat-raised-button
+    (click)="isLaunchingScanner = true"
+  >
+    <mat-icon>camera_alt</mat-icon>
+    <span>認識を開始</span>
+  </button>
+</div>
 <!---->
 
 <!-- スキャナ領域 -->

@@ -135,6 +135,17 @@ export class NaviHomePageComponent implements OnInit {
     );
   }
 
+  /**
+   * 手牌をおすすめ順に並び替え
+   */
+  sortHoldTiles() {
+    this.holdTiles.sort((a, b) => {
+      const labelA = a.suggestedGroup?.groupingLabel || 'ZZ';
+      const labelB = b.suggestedGroup?.groupingLabel || 'ZZ';
+      return labelA.localeCompare(labelB);
+    });
+  }
+
   private loadSession() {
     const holdTiles = window.sessionStorage.getItem('holdTiles');
     if (holdTiles) {
