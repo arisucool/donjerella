@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { DonjaraTileScannerResult } from 'src/app/shared/classes/donjara-tile-scanner/donjara-tile-scanner';
-import { CgDonjaraTile } from '../../interfaces/cg-donjara-tile';
+import {
+  CgDonjaraHoldTile,
+  CgDonjaraTile,
+} from '../../interfaces/cg-donjara-tile';
 import { CgUnit } from '../../interfaces/cg-unit';
 import { NaviService } from '../../services/navi.service';
 import { ScannerService } from '../../services/scanner.service';
@@ -12,11 +15,11 @@ import { ScannerService } from '../../services/scanner.service';
 })
 export class NaviHomePageComponent implements OnInit {
   // 最新の認識結果
-  public holdTiles: CgDonjaraTile[] = [];
+  public holdTiles: CgDonjaraHoldTile[] = [];
   // 推奨されるユニット一覧
   public recommendedUnits: CgUnit[] = [];
   // 選択中の手牌
-  public selectedHoldTile: CgDonjaraTile | undefined;
+  public selectedHoldTile: CgDonjaraHoldTile | undefined;
 
   // スキャナを実行中か
   public isLaunchingScanner = false;
@@ -29,9 +32,12 @@ export class NaviHomePageComponent implements OnInit {
   async ngOnInit() {
     this.holdTiles = [];
     if (!this.loadSession()) {
-      this.holdTiles = await this.scannerService.getCgTilesByScannerResult(
+      // サンプルの手札を読み取る
+      const cgTiles = await this.scannerService.getCgTilesByScannerResult(
         await this.scannerService.getExampleResult()
       );
+      // 推奨される組み合わせを取得
+      this.holdTiles = await this.naviService.groupingHoldTiles(cgTiles);
     }
 
     this.recommendedUnits = [];
@@ -40,7 +46,7 @@ export class NaviHomePageComponent implements OnInit {
   async onScanned(result: DonjaraTileScannerResult) {
     this.isLaunchingScanner = false;
     const tiles = await this.scannerService.getCgTilesByScannerResult(result);
-    this.holdTiles = tiles;
+    this.holdTiles = await this.naviService.groupingHoldTiles(tiles);
     if (tiles.length > 0) {
       this.saveSession();
     }

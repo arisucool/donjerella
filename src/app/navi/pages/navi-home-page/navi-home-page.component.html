@@ -40,12 +40,26 @@
               selectedHoldTile &&
               selectedHoldTile.identifier === tile.identifier
           }"
-          [matTooltip]="'(検出スコア: ' + tile.score + ')'"
           (click)="onHoldTileSelect(tile)"
         >
-          <img class="tile-image" [src]="tile.imageUrl" />
+          <img
+            class="tile-image"
+            [src]="tile.imageUrl"
+            [matTooltip]="'(検出スコア: ' + tile.score + ')'"
+          />
           <div class="tile-label">
             <span>{{ tile.label }}</span>
+          </div>
+          <div class="tile-group-labels">
+            <ng-container *ngIf="tile.suggestedGroup">
+              <div
+                class="tile-group-label"
+                [style.backgroundColor]="tile.suggestedGroup.groupingColor"
+                [matTooltip]="'ユニット提案: ' + tile.suggestedGroup.unit.label"
+              >
+                {{ tile.suggestedGroup.groupingLabel }}
+              </div>
+            </ng-container>
           </div>
         </article>
       </ng-container>
@@ -80,7 +94,7 @@
 </section>
 <!---->
 
-<p style="color: #555555; font-size: 0.75rem; margin: 1rem 0.25rem 0 0.25rem">
+<p style="color: #555555; font-size: 0.75rem; margin: 3rem 0.25rem 0 0.25rem">
   "ドンジャラNEO アイドルマスターシンデレラガールズ"
   をさらに楽しむための非公式ガイドサービスです。<br />
   株式会社バンダイナムコエンターテインメント様、株式会社バンダイ様、株式会社Cygames様などとは一切関係ございません。<br />

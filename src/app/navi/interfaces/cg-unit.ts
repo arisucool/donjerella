@@ -1,4 +1,4 @@
-import { CgDonjaraTile } from './cg-donjara-tile';
+import { CgDonjaraUnitTile } from './cg-donjara-tile';
 
 export interface CgUnit {
   // ユニット名
@@ -7,7 +7,7 @@ export interface CgUnit {
   numOfMembers: number;
   // メンバーの牌
   tileIdentifiers?: string[];
-  tiles?: CgDonjaraTile[];
+  tiles?: CgDonjaraUnitTile[];
   // 手牌に含まれるメンバーの数
   numOfHoldTiles?: number;
   // 収録情報

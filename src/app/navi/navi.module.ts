@@ -7,7 +7,11 @@ import { ScannerComponent } from './widgets/scanner/scanner.component';
 import { ExternalScannerComponent } from './pages/external-scanner/external-scanner.component';
 
 @NgModule({
-  declarations: [NaviHomePageComponent, ScannerComponent, ExternalScannerComponent],
+  declarations: [
+    NaviHomePageComponent,
+    ScannerComponent,
+    ExternalScannerComponent,
+  ],
   imports: [CommonModule, NaviRoutingModule, SharedModule],
 })
 export class NaviModule {}

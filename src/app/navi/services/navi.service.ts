@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
 import { CgUnit, CgUnitDefinition } from '../interfaces/cg-unit';
 import { environment } from 'src/environments/environment';
-import { CgDonjaraTile } from '../interfaces/cg-donjara-tile';
+import {
+  CgDonjaraHoldTile,
+  CgDonjaraHoldTileGroup,
+  CgDonjaraTile,
+} from '../interfaces/cg-donjara-tile';
 import { TileDatabaseService } from './tile-database.service';
 
 @Injectable({
@@ -118,5 +122,88 @@ export class NaviService {
 
     // ユニットの配列を返す
     return filteredUnits;
+  }
+
+  /**
+   * 手牌のグルーピング
+   * @param cgTiles 手牌
+   */
+  async groupingHoldTiles(
+    cgTiles: CgDonjaraTile[]
+  ): Promise<CgDonjaraHoldTile[]> {
+    const suggestedGroups: { [key: string]: CgDonjaraHoldTileGroup } = {};
+    const recommendedUnits = await this.getRecommendedUnitsByHoldTiles(cgTiles);
+
+    const tiles: CgDonjaraHoldTile[] = [];
+    for (const cgTile of cgTiles) {
+      // 提案されるユニットを取得
+      let suggestedUnit: CgUnit | undefined = undefined;
+      if (recommendedUnits) {
+        for (const unit of recommendedUnits) {
+          if (
+            unit.tiles!.some(
+              (t: CgDonjaraTile) => t.identifier === cgTile.identifier
+            )
+          ) {
+            suggestedUnit = unit;
+            break;
+          }
+        }
+      }
+
+      // グルーピング情報を設定
+      let suggestedGroup: CgDonjaraHoldTileGroup | undefined;
+      if (
+        suggestedUnit &&
+        suggestedUnit.numOfHoldTiles &&
+        2 <= suggestedUnit.numOfHoldTiles
+      ) {
+        if (suggestedGroups[suggestedUnit.label!]) {
+          suggestedGroup = suggestedGroups[suggestedUnit.label!];
+        } else {
+          const countOfGroups = Object.keys(suggestedGroups).length;
+          const groupingLabel = String.fromCharCode(65 + countOfGroups);
+          suggestedGroups[suggestedUnit.label!] = {
+            groupingColor: this.getGroupingColorByNumber(countOfGroups),
+            groupingLabel: groupingLabel,
+            unit: suggestedUnit,
+          };
+        }
+        suggestedGroup = suggestedGroups[suggestedUnit.label!];
+      }
+
+      // 配列へ牌を追加
+      const tile: CgDonjaraHoldTile = {
+        ...cgTile,
+        suggestedGroup: suggestedGroup,
+      };
+      tiles.push(tile);
+    }
+
+    return tiles;
+  }
+
+  getGroupingColorByNumber(countOfGroups: number): string {
+    const colors = [
+      // A - 水色
+      '#18c3d9',
+      // B - 赤
+      '#d9185c',
+      // C - 黄緑
+      '#a2d918',
+      // D - オレンジ
+      '#d97818',
+      // E - 紫
+      '#8418d9',
+      // F - 緑
+      '#18d928',
+    ];
+
+    const index = countOfGroups % colors.length;
+    if (index >= colors.length) {
+      return '#000000';
+    }
+
+    return colors[index];
   }
 }
