@@ -1,0 +1,48 @@
+<ng-container *ngIf="!requestedType">
+  <div class="caption"></div>
+  <div class="types">
+    <button
+      (click)="onSelectType('cute')"
+      mat-raised-button
+      style="border-color: #f50176"
+    >
+      キュート
+    </button>
+    <button
+      (click)="onSelectType('cool')"
+      mat-raised-button
+      style="border-color: #0069ff"
+    >
+      クール
+    </button>
+    <button
+      (click)="onSelectType('passion')"
+      mat-raised-button
+      style="border-color: #feb601"
+    >
+      パッション
+    </button>
+  </div>
+</ng-container>
+<ng-container *ngIf="requestedType">
+  <div class="tiles" *ngIf="tiles && tiles.length > 0">
+    <ng-container *ngFor="let tile of tiles">
+      <button
+        (click)="onSelectTile(tile)"
+        mat-button
+        class="tile"
+        [matTooltip]="tile.label"
+      >
+        <img class="tile-image" [src]="tile.imageUrl" />
+      </button>
+    </ng-container>
+
+    <!-- レイアウト崩れを防止するためのダミー要素 -->
+    <ng-container *ngFor="let item of [].constructor(10); let i = index">
+      <button mat-button class="tile dummy">
+        <img class="tile-image" [src]="tiles[0].imageUrl" />
+      </button>
+    </ng-container>
+    <!---->
+  </div>
+</ng-container>

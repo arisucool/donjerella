@@ -117,6 +117,7 @@
       mat-button
       class="tile hold-tile add-tile-button"
       matTooltip="手牌を追加"
+      *ngIf="holdTiles.length <= 8"
     >
       <mat-icon>add_circle</mat-icon>
       <img

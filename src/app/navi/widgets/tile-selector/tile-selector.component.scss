@@ -1,0 +1,50 @@
+:host {
+  margin: 1rem 1rem;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.types {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1rem;
+  padding: 0 1rem 0 1rem;
+  gap: 1rem;
+
+  button {
+    border-bottom: 5px solid #ffffff;
+    padding: 2rem 1rem;
+    width: 20vw;
+  }
+}
+
+.tiles {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem 0 1rem;
+  gap: 0.25rem;
+
+  .tile {
+    height: fit-content;
+
+    .tile-image {
+      width: 60px;
+      height: 78.4px;
+    }
+
+    &.dummy {
+      height: 0 !important;
+      .tile-image {
+        height: 0 !important;
+      }
+    }
+  }
+}

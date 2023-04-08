@@ -7,6 +7,11 @@
   gap: 0.5rem;
 }
 
+::ng-deep .full-width-dialog {
+  max-width: 96vw !important;
+  width: 96vw;
+}
+
 // スキャナ起動ボタン
 
 .scanner-launch-button {

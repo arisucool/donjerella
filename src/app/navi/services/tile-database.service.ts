@@ -25,6 +25,13 @@ export class TileDatabaseService {
     this.units = units!;
   }
 
+  async getTiles() {
+    if (!this.tiles.length) {
+      await this.load();
+    }
+    return this.tiles;
+  }
+
   async getTileByIdentifier(
     identifier: string
   ): Promise<CgDonjaraTile | undefined> {
@@ -48,7 +55,7 @@ export class TileDatabaseService {
     return this.units;
   }
 
-  public async fetchTiles() {
+  async fetchTiles() {
     const cache = this.getCachedJson(
       'tiles',
       TileDatabaseService.DATABASE_CACHE_EXPIRES
@@ -142,7 +149,7 @@ export class TileDatabaseService {
     return this.tiles.find((t) => t.label === name);
   }
 
-  public async fetchUnits() {
+  async fetchUnits() {
     const cache = this.getCachedJson(
       'units',
       TileDatabaseService.DATABASE_CACHE_EXPIRES

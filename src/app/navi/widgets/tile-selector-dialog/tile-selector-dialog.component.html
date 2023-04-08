@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>{{ data.title }}</h1>
+<mat-dialog-content>
+  <app-tile-selector
+    [recommendedTiles]="data.recommendedTiles"
+    [excludeTiles]="data.excludeTiles"
+    (onSelectTile)="onSelectTile($event)"
+  ></app-tile-selector>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>キャンセル</button>
+</mat-dialog-actions>

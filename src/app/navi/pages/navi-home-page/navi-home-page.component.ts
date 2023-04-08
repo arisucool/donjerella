@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { lastValueFrom } from 'rxjs';
 import { DonjaraTileScannerResult } from 'src/app/shared/classes/donjara-tile-scanner/donjara-tile-scanner';
 import {
   CgDonjaraHoldTile,
@@ -8,6 +10,8 @@ import {
 import { CgUnit } from '../../interfaces/cg-unit';
 import { NaviService } from '../../services/navi.service';
 import { ScannerService } from '../../services/scanner.service';
+import { TileDatabaseService } from '../../services/tile-database.service';
+import { TileSelectorDialogComponent } from '../../widgets/tile-selector-dialog/tile-selector-dialog.component';
 
 @Component({
   selector: 'app-navi-home-page',
@@ -28,7 +32,8 @@ export class NaviHomePageComponent implements OnInit {
   constructor(
     private naviService: NaviService,
     private scannerService: ScannerService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {}
 
   async ngOnInit() {
@@ -67,16 +72,52 @@ export class NaviHomePageComponent implements OnInit {
     );
   }
 
-  addHoldTile() {
-    this.snackBar.open(`TODO: 本機能は実装中です`, undefined, {
-      duration: 3000,
+  async addHoldTile() {
+    // ダイアログを開く
+    const dialogRef = this.dialog.open(TileSelectorDialogComponent, {
+      data: {
+        title: '手牌を追加',
+        excludeTiles: this.holdTiles,
+      },
+      panelClass: 'full-width-dialog',
     });
+
+    const result = await lastValueFrom(dialogRef.afterClosed());
+    if (!result) return;
+
+    // 手牌に追加
+    this.holdTiles.push({
+      ...result,
+    });
+
+    // 推奨される組み合わせを取得
+    this.holdTiles = await this.naviService.groupingHoldTiles(this.holdTiles);
   }
 
-  fixWrongHoldTile(tile: CgDonjaraTile) {
-    this.snackBar.open(`TODO: 本機能は実装中です`, undefined, {
-      duration: 3000,
+  async fixWrongHoldTile(tile: CgDonjaraTile) {
+    // ダイアログを開く
+    const dialogRef = this.dialog.open(TileSelectorDialogComponent, {
+      data: {
+        title: '正しい牌を選択',
+      },
+      panelClass: 'full-width-dialog',
     });
+
+    const result = await lastValueFrom(dialogRef.afterClosed());
+    if (!result) return;
+
+    // 誤った牌と交換
+    this.holdTiles = this.holdTiles.map((t) => {
+      if (t.identifier === tile.identifier) {
+        return {
+          ...result,
+        };
+      }
+      return t;
+    });
+
+    // 推奨される組み合わせを取得
+    this.holdTiles = await this.naviService.groupingHoldTiles(this.holdTiles);
   }
 
   removeHoldTile(tile: CgDonjaraTile) {
@@ -89,7 +130,7 @@ export class NaviHomePageComponent implements OnInit {
       `手牌から "${tile.label}" の牌を捨てました。新しい牌を追加してください。`,
       undefined,
       {
-        duration: 3000,
+        duration: 2000,
       }
     );
   }
