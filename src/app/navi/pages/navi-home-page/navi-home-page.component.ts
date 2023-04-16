@@ -138,13 +138,29 @@ export class NaviHomePageComponent implements OnInit {
     await this.setHoldTiles(tiles);
     this.saveSession();
 
-    this.snackBar.open(
+    const mes = this.snackBar.open(
       `手牌から "${tile.label}" の牌を捨てました。新しい牌を追加してください。`,
-      undefined,
+      '取り消し',
       {
-        duration: 2000,
+        duration: 3000,
       }
     );
+
+    // 元に戻すボタンのイベントハンドラを設定
+    mes.onAction().subscribe(() => {
+      if (this.holdTiles.length >= 9) {
+        return;
+      }
+
+      // 捨てた牌を手牌に戻す
+      const tiles_ = [...this.holdTiles, tile];
+      this.setHoldTiles(tiles_);
+      this.saveSession();
+
+      this.snackBar.open('操作を取り消し、牌を元に戻しました', undefined, {
+        duration: 2000,
+      });
+    });
   }
 
   /**
