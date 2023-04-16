@@ -1,6 +1,8 @@
 # Donjerella
 
-Navi for CG Donjara
+![Icon for Donjerella](https://github.com/arisucool/donjerella/blob/main/src/assets/icon-192x192.png?raw=true)
+
+Guide for CG Donjara
 
 https://arisucool.github.io/donjerella
 
