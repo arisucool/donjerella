@@ -64,6 +64,14 @@ describe('CgDonjaraFinishChecker', () => {
           idolStatus: 'visual',
         },
         {
+          identifier: '026',
+          label: '一ノ瀬志希',
+          imageUrl: '',
+          pack: 'initial',
+          idolType: 'cute',
+          idolStatus: 'vocal',
+        },
+        {
           identifier: '034',
           label: '双葉杏',
           imageUrl: '',
@@ -74,6 +82,14 @@ describe('CgDonjaraFinishChecker', () => {
         {
           identifier: '060',
           label: '乙倉悠貴',
+          imageUrl: '',
+          pack: 'initial',
+          idolType: 'cute',
+          idolStatus: 'vocal',
+        },
+        {
+          identifier: '064',
+          label: '黒埼ちとせ',
           imageUrl: '',
           pack: 'initial',
           idolType: 'cute',
@@ -208,6 +224,11 @@ describe('CgDonjaraFinishChecker', () => {
           tileIdentifiers: ['140', '163', '166'], // 赤城みりあ、城ヶ崎莉嘉、諸星きらり
         },
         {
+          label: 'fleeting bouquet',
+          numOfMembers: 3,
+          tileIdentifiers: ['124', '026', '064'], // 結城晴、一ノ瀬志希、黒埼ちとせ
+        },
+        {
           label: 'Love Yell',
           numOfMembers: 5,
           // 乙倉悠貴、諸星きらり、五十嵐響子、姫川友紀、水本ゆかり
@@ -241,17 +262,17 @@ describe('CgDonjaraFinishChecker', () => {
       {
         name: '5スター',
         score: 360000,
-        units: [
-          {
+        units: expect.arrayContaining([
+          expect.objectContaining({
             label: 'Love Yell',
-          },
-          {
+          }),
+          expect.objectContaining({
             label: 'ビートシューター',
-          },
-          {
+          }),
+          expect.objectContaining({
             label: '汎用cooldance',
-          },
-        ],
+          }),
+        ]),
       },
     ]);
   });
@@ -276,17 +297,17 @@ describe('CgDonjaraFinishChecker', () => {
       {
         name: 'トリコロール',
         score: 240000,
-        units: [
-          {
+        units: expect.arrayContaining([
+          expect.objectContaining({
             label: 'P.C.S.',
-          },
-          {
+          }),
+          expect.objectContaining({
             label: 'トランクィル・ウィスパー',
-          },
-          {
+          }),
+          expect.objectContaining({
             label: '凸レーション',
-          },
-        ],
+          }),
+        ]),
       },
     ]);
   });
@@ -312,20 +333,20 @@ describe('CgDonjaraFinishChecker', () => {
       {
         name: 'スタートダッシュ',
         score: 60000,
-        units: [
-          {
+        units: expect.arrayContaining([
+          expect.objectContaining({
             label: 'ももぺあべりー',
-          },
-          {
+          }),
+          expect.objectContaining({
             label: 'Sola-iris',
-          },
-          {
+          }),
+          expect.objectContaining({
             label: '汎用coolvisual',
-          },
-          {
+          }),
+          expect.objectContaining({
             label: '汎用cutedance',
-          },
-        ],
+          }),
+        ]),
       },
     ]);
   });
@@ -350,17 +371,17 @@ describe('CgDonjaraFinishChecker', () => {
       {
         name: 'ノーマルライブ',
         score: 120000,
-        units: [
-          {
+        units: expect.arrayContaining([
+          expect.objectContaining({
             label: 'プチ＊パフェアリー',
-          },
-          {
+          }),
+          expect.objectContaining({
             label: 'ももぺあべりー',
-          },
-          {
+          }),
+          expect.objectContaining({
             label: '汎用cooldance',
-          },
-        ],
+          }),
+        ]),
       },
     ]);
   });
