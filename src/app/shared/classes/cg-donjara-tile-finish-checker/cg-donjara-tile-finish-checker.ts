@@ -22,28 +22,34 @@ export class CgDonjaraTileFinishChecker {
     this.idols = params.tiles;
   }
 
-  public checkFinish(tiles: Array<string>) {
+  public checkFinish(tileIdentifiers: Array<string>) {
     // TODO: 重複チェックで同じアイドルが2人入ってきたらエラーみたいなの返す？
+
+    if (tileIdentifiers.length !== 9) {
+      // 9人でない場合は不成立
+      return undefined;
+    }
+
     let result;
-    if ((result = this.checkCinderellaGirls(tiles))) {
+    if ((result = this.checkCinderellaGirls(tileIdentifiers))) {
       return result;
-    } else if ((result = this.checkWonderfulMagic(tiles))) {
+    } else if ((result = this.checkWonderfulMagic(tileIdentifiers))) {
       return result;
-    } else if ((result = this.checkEnsemble(tiles))) {
+    } else if ((result = this.checkEnsemble(tileIdentifiers))) {
       return result;
-    } else if ((result = this.checkFiveStar(tiles))) {
+    } else if ((result = this.checkFiveStar(tileIdentifiers))) {
       return result;
-    } else if ((result = this.checkQuartet(tiles))) {
+    } else if ((result = this.checkQuartet(tileIdentifiers))) {
       return result;
-    } else if ((result = this.checkSymphony(tiles))) {
+    } else if ((result = this.checkSymphony(tileIdentifiers))) {
       return result;
-    } else if ((result = this.checkTricolor(tiles))) {
+    } else if ((result = this.checkTricolor(tileIdentifiers))) {
       return result;
-    } else if ((result = this.checkNormalLive(tiles))) {
+    } else if ((result = this.checkNormalLive(tileIdentifiers))) {
       return result;
-    } else if ((result = this.checkStartDash(tiles))) {
+    } else if ((result = this.checkStartDash(tileIdentifiers))) {
       return result;
-    } else if ((result = this.checkRehearsal(tiles))) {
+    } else if ((result = this.checkRehearsal(tileIdentifiers))) {
       return result;
     }
     return undefined;
@@ -171,7 +177,7 @@ export class CgDonjaraTileFinishChecker {
             if ((unit3 = this.getMatchedUnit(remainingTiles2))) {
               results.push({
                 name: '5スター',
-                score: 420000,
+                score: 360000,
                 units: [unit1, unit2, unit3],
               });
             }
@@ -317,7 +323,7 @@ export class CgDonjaraTileFinishChecker {
               if ((unit3 = this.getMatchedUnit(remainingTiles2))) {
                 results.push({
                   name: 'ノーマルライブ',
-                  score: 420000,
+                  score: 120000,
                   units: [unit1, unit3, unit2],
                 });
               }
