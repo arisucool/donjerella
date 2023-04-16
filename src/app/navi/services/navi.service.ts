@@ -7,12 +7,33 @@ import {
   CgDonjaraTile,
 } from '../../shared/interfaces/cg-donjara-tile';
 import { TileDatabaseService } from './tile-database.service';
+import { CgDonjaraFinishChecker } from 'src/app/shared/classes/cg-donjara-finish-checker/cg-donjara-finish-checker';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NaviService {
+  private finishChecker?: CgDonjaraFinishChecker;
+
   constructor(private tileDatabaseService: TileDatabaseService) {}
+
+  /**
+   * 指定された手牌による上がり判定
+   * @param tiles 手牌
+   * @returns 上がりならばユニットの配列、上がっていないならば undefined
+   */
+  async checkFinish(tiles: CgDonjaraTile[]) {
+    if (!this.finishChecker) {
+      this.finishChecker = new CgDonjaraFinishChecker({
+        isDebug: false,
+        tiles: await this.tileDatabaseService.getTiles(),
+        units: await this.tileDatabaseService.getUnits(),
+      });
+    }
+
+    const identifiers: string[] = tiles.map((t) => t.identifier);
+    return this.finishChecker!.checkFinish(identifiers);
+  }
 
   /**
    * 指定された手牌によるユニットの取得

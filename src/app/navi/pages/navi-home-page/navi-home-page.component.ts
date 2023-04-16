@@ -39,11 +39,10 @@ export class NaviHomePageComponent implements OnInit {
     this.holdTiles = [];
     if (!this.loadSession()) {
       // サンプルの手札を読み取る
-      const cgTiles = await this.scannerService.getCgTilesByScannerResult(
+      const tiles = await this.scannerService.getCgTilesByScannerResult(
         await this.scannerService.getExampleResult()
       );
-      // 推奨される組み合わせを取得
-      this.holdTiles = await this.naviService.groupingHoldTiles(cgTiles);
+      await this.setHoldTiles(tiles);
     }
 
     this.recommendedUnits = [];
@@ -52,7 +51,7 @@ export class NaviHomePageComponent implements OnInit {
   async onScanned(result: DonjaraTileScannerResult) {
     this.isLaunchingScanner = false;
     const tiles = await this.scannerService.getCgTilesByScannerResult(result);
-    this.holdTiles = await this.naviService.groupingHoldTiles(tiles);
+    await this.setHoldTiles(tiles);
     if (tiles.length > 0) {
       this.saveSession();
     }
@@ -95,12 +94,8 @@ export class NaviHomePageComponent implements OnInit {
     if (!result) return;
 
     // 手牌に追加
-    this.holdTiles.push({
-      ...result,
-    });
-
-    // 推奨される組み合わせを取得
-    this.holdTiles = await this.naviService.groupingHoldTiles(this.holdTiles);
+    const tiles = [...this.holdTiles, result];
+    await this.setHoldTiles(tiles);
 
     // 選択を解除
     this.resetHoldTileSelect();
@@ -119,7 +114,8 @@ export class NaviHomePageComponent implements OnInit {
     if (!result) return;
 
     // 誤った牌と交換
-    this.holdTiles = this.holdTiles.map((t) => {
+    let tiles = [...this.holdTiles];
+    tiles = tiles.map((t) => {
       if (t.identifier === tile.identifier) {
         return {
           ...result,
@@ -127,18 +123,17 @@ export class NaviHomePageComponent implements OnInit {
       }
       return t;
     });
-
-    // 推奨される組み合わせを取得
-    this.holdTiles = await this.naviService.groupingHoldTiles(this.holdTiles);
+    await this.setHoldTiles(tiles);
 
     // 選択を解除
     this.resetHoldTileSelect();
   }
 
-  removeHoldTile(tile: CgDonjaraTile) {
-    this.holdTiles = this.holdTiles.filter(
+  async removeHoldTile(tile: CgDonjaraTile) {
+    const tiles = this.holdTiles.filter(
       (t) => t.identifier !== tile.identifier
     );
+    await this.setHoldTiles(tiles);
     this.saveSession();
 
     this.snackBar.open(
@@ -159,6 +154,11 @@ export class NaviHomePageComponent implements OnInit {
       const labelB = b.suggestedGroup?.groupingLabel || 'ZZ';
       return labelA.localeCompare(labelB);
     });
+  }
+
+  private async setHoldTiles(holdTiles: CgDonjaraTile[]) {
+    // 推奨される組み合わせを取得
+    this.holdTiles = await this.naviService.groupingHoldTiles(holdTiles);
   }
 
   private loadSession() {
