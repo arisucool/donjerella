@@ -1,13 +1,13 @@
 import { CgDonjaraTile } from 'src/app/shared/interfaces/cg-donjara-tile';
 import { CgUnit } from 'src/app/shared/interfaces/cg-unit';
 
-interface CgDonjaraTileFinishCheckerResult {
+interface CgDonjaraFinishCheckerResult {
   name: string;
   score: number;
   units: CgUnit[];
 }
 
-export class CgDonjaraTileFinishChecker {
+export class CgDonjaraFinishChecker {
   private isDebug: boolean;
   private units: CgUnit[];
   private idols: CgDonjaraTile[];
@@ -152,7 +152,7 @@ export class CgDonjaraTileFinishChecker {
   private checkFiveStar(tiles: Array<string>) {
     const units1 = this.units.filter((unit) => unit.numOfMembers === 5);
     if (!units1.length) return false;
-    const results: Array<CgDonjaraTileFinishCheckerResult> = [];
+    const results: Array<CgDonjaraFinishCheckerResult> = [];
     for (const unit1 of units1) {
       if (
         !unit1.tileIdentifiers.every((id) => tiles.find((tile) => tile === id))
@@ -192,7 +192,7 @@ export class CgDonjaraTileFinishChecker {
   private checkQuartet(tiles: Array<string>) {
     const units1 = this.units.filter((unit) => unit.numOfMembers === 4);
     if (!units1.length) return false;
-    const results: Array<CgDonjaraTileFinishCheckerResult> = [];
+    const results: Array<CgDonjaraFinishCheckerResult> = [];
     for (const unit1 of units1) {
       if (
         !unit1.tileIdentifiers.every((id) => tiles.find((tile) => tile === id))
@@ -255,7 +255,7 @@ export class CgDonjaraTileFinishChecker {
   private checkTricolor(tiles: Array<string>) {
     const units1 = this.units.filter((unit) => unit.numOfMembers === 3);
     if (!units1.length) return false;
-    const results: Array<CgDonjaraTileFinishCheckerResult> = [];
+    const results: Array<CgDonjaraFinishCheckerResult> = [];
     for (const unit1 of units1) {
       if (
         !unit1.tileIdentifiers.every((id) => tiles.find((tile) => tile === id))
@@ -296,7 +296,7 @@ export class CgDonjaraTileFinishChecker {
   private checkNormalLive(tiles: Array<string>) {
     const units1 = this.units.filter((unit) => unit.numOfMembers === 3);
     if (!units1.length) return false;
-    const results: Array<CgDonjaraTileFinishCheckerResult> = [];
+    const results: Array<CgDonjaraFinishCheckerResult> = [];
     for (const unit1 of units1) {
       if (
         !unit1.tileIdentifiers.every((id) => tiles.find((tile) => tile === id))
@@ -339,7 +339,7 @@ export class CgDonjaraTileFinishChecker {
   private checkStartDash(tiles: Array<string>) {
     const units1 = this.units.filter((unit) => unit.numOfMembers === 3);
     if (!units1.length) return false;
-    const results: Array<CgDonjaraTileFinishCheckerResult> = [];
+    const results: Array<CgDonjaraFinishCheckerResult> = [];
     for (const unit1 of units1) {
       if (
         !unit1.tileIdentifiers.every((id) => tiles.find((tile) => tile === id))
@@ -450,7 +450,7 @@ export class CgDonjaraTileFinishChecker {
   }
 
   // 重複する結果を削除
-  private uniqueResults(results: CgDonjaraTileFinishCheckerResult[]) {
+  private uniqueResults(results: CgDonjaraFinishCheckerResult[]) {
     return results
       .filter(
         (result1, i) =>

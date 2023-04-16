@@ -1,10 +1,10 @@
-import { CgDonjaraTileFinishChecker } from './cg-donjara-tile-finish-checker';
+import { CgDonjaraFinishChecker } from './cg-donjara-finish-checker';
 
-describe('CgDonjaraTileFinishChecker', () => {
-  let finishChecker: CgDonjaraTileFinishChecker;
+describe('CgDonjaraFinishChecker', () => {
+  let finishChecker: CgDonjaraFinishChecker;
 
   beforeEach(() => {
-    finishChecker = new CgDonjaraTileFinishChecker({
+    finishChecker = new CgDonjaraFinishChecker({
       isDebug: false,
       tiles: [
         {
