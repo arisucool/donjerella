@@ -11,10 +11,7 @@ import { CgUnit } from '../../../shared/interfaces/cg-unit';
 import { NaviService } from '../../services/navi.service';
 import { ScannerService } from '../../services/scanner.service';
 import { TileSelectorDialogComponent } from '../../widgets/tile-selector-dialog/tile-selector-dialog.component';
-import {
-  CgDonjaraFinishChecker,
-  CgDonjaraFinishCheckerResult,
-} from 'src/app/shared/classes/cg-donjara-finish-checker/cg-donjara-finish-checker';
+import { CgDonjaraFinishCheckerResult } from '../../../shared/classes/cg-donjara-finish-checker/cg-donjara-finish-checker';
 
 @Component({
   selector: 'app-navi-home-page',

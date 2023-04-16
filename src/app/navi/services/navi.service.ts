@@ -7,7 +7,7 @@ import {
   CgDonjaraTile,
 } from '../../shared/interfaces/cg-donjara-tile';
 import { TileDatabaseService } from './tile-database.service';
-import { CgDonjaraFinishChecker } from 'src/app/shared/classes/cg-donjara-finish-checker/cg-donjara-finish-checker';
+import { CgDonjaraFinishChecker } from '../../shared/classes/cg-donjara-finish-checker/cg-donjara-finish-checker';
 
 @Injectable({
   providedIn: 'root',
