@@ -185,9 +185,9 @@ export class NaviHomePageComponent implements OnInit {
       if (result.length > 0) {
         // 上がりならば
         this.snackBar.open(
-          `おめでとうございます！ ${
-            result[0].name
-          } (${result[0].score.toLocaleString()} 万人) で上がりました`,
+          `おめでとうございます！ ${result[0].name} (${
+            result[0].score / 10000
+          }万人) で上がりました`,
           'OK'
         );
       }
