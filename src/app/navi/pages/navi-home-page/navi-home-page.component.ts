@@ -6,8 +6,8 @@ import { DonjaraTileScannerResult } from 'src/app/shared/classes/donjara-tile-sc
 import {
   CgDonjaraHoldTile,
   CgDonjaraTile,
-} from '../../interfaces/cg-donjara-tile';
-import { CgUnit } from '../../interfaces/cg-unit';
+} from '../../../shared/interfaces/cg-donjara-tile';
+import { CgUnit } from '../../../shared/interfaces/cg-unit';
 import { NaviService } from '../../services/navi.service';
 import { ScannerService } from '../../services/scanner.service';
 import { TileDatabaseService } from '../../services/tile-database.service';

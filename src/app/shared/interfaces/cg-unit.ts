@@ -6,12 +6,12 @@ export interface CgUnit {
   // メンバーの人数
   numOfMembers: number;
   // メンバーの牌
-  tileIdentifiers?: string[];
+  tileIdentifiers: string[];
   tiles?: CgDonjaraUnitTile[];
   // 手牌に含まれるメンバーの数
   numOfHoldTiles?: number;
   // 収録情報
-  listed: {
+  listed?: {
     // ユニットガイドブックに収録されているか
     unitGuideBook?: boolean;
     // デレステに楽曲があるか

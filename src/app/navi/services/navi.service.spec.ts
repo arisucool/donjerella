@@ -7,7 +7,7 @@ import { TileDatabaseService } from './tile-database.service';
 import {
   CgDonjaraHoldTile,
   CgDonjaraTile,
-} from '../interfaces/cg-donjara-tile';
+} from '../../shared/interfaces/cg-donjara-tile';
 
 describe('NaviService', () => {
   let tileDatabaseService: TileDatabaseService;

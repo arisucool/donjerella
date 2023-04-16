@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { CgDonjaraTile } from '../../interfaces/cg-donjara-tile';
+import { CgDonjaraTile } from '../../../shared/interfaces/cg-donjara-tile';
 
 export interface TileSelectorDialogData {
   title: string;

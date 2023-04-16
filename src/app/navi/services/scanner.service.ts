@@ -4,8 +4,7 @@ import {
   DonjaraTileScannerResult,
 } from '../../shared/classes/donjara-tile-scanner/donjara-tile-scanner';
 import { environment } from '../../../environments/environment';
-import { CgDonjaraTile } from '../interfaces/cg-donjara-tile';
-import { NaviService } from './navi.service';
+import { CgDonjaraTile } from '../../shared/interfaces/cg-donjara-tile';
 import { TileDatabaseService } from './tile-database.service';
 
 @Injectable({

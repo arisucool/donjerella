@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { CgUnit, CgUnitDefinition } from '../interfaces/cg-unit';
+import { CgUnit, CgUnitDefinition } from '../../shared/interfaces/cg-unit';
 import { environment } from '../../../environments/environment';
 import {
   CgDonjaraHoldTile,
   CgDonjaraHoldTileGroup,
   CgDonjaraTile,
-} from '../interfaces/cg-donjara-tile';
+} from '../../shared/interfaces/cg-donjara-tile';
 import { TileDatabaseService } from './tile-database.service';
 
 @Injectable({

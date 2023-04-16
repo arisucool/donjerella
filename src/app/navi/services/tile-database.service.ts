@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import * as Papa from 'papaparse';
-import { CgDonjaraTile } from '../interfaces/cg-donjara-tile';
-import { CgUnit } from '../interfaces/cg-unit';
+import { CgDonjaraTile } from '../../shared/interfaces/cg-donjara-tile';
+import { CgUnit } from '../../shared/interfaces/cg-unit';
 import { HttpClient } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
 

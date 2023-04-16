@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { CgDonjaraTile } from '../../interfaces/cg-donjara-tile';
+import { CgDonjaraTile } from '../../../shared/interfaces/cg-donjara-tile';
 import { TileDatabaseService } from '../../services/tile-database.service';
 
 @Component({
