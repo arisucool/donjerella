@@ -1,7 +1,7 @@
 import { CgDonjaraTile } from 'src/app/shared/interfaces/cg-donjara-tile';
 import { CgUnit } from 'src/app/shared/interfaces/cg-unit';
 
-interface CgDonjaraFinishCheckerResult {
+export interface CgDonjaraFinishCheckerResult {
   name: string;
   score: number;
   units: CgUnit[];

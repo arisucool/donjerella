@@ -11,6 +11,10 @@ import { CgUnit } from '../../../shared/interfaces/cg-unit';
 import { NaviService } from '../../services/navi.service';
 import { ScannerService } from '../../services/scanner.service';
 import { TileSelectorDialogComponent } from '../../widgets/tile-selector-dialog/tile-selector-dialog.component';
+import {
+  CgDonjaraFinishChecker,
+  CgDonjaraFinishCheckerResult,
+} from 'src/app/shared/classes/cg-donjara-finish-checker/cg-donjara-finish-checker';
 
 @Component({
   selector: 'app-navi-home-page',
@@ -96,6 +100,7 @@ export class NaviHomePageComponent implements OnInit {
     // 手牌に追加
     const tiles = [...this.holdTiles, result];
     await this.setHoldTiles(tiles);
+    this.saveSession();
 
     // 選択を解除
     this.resetHoldTileSelect();
@@ -159,6 +164,21 @@ export class NaviHomePageComponent implements OnInit {
   private async setHoldTiles(holdTiles: CgDonjaraTile[]) {
     // 推奨される組み合わせを取得
     this.holdTiles = await this.naviService.groupingHoldTiles(holdTiles);
+
+    // 上がりを判定
+    const finishSets = await this.naviService.checkFinish(this.holdTiles);
+    if (finishSets) {
+      const result = finishSets as CgDonjaraFinishCheckerResult[];
+      if (result.length > 0) {
+        // 上がりならば
+        this.snackBar.open(
+          `おめでとうございます！ ${
+            result[0].name
+          } (${result[0].score.toLocaleString()} 万人) で上がりました`,
+          'OK'
+        );
+      }
+    }
   }
 
   private loadSession() {
