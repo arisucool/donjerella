@@ -10,7 +10,6 @@ import {
 import { CgUnit } from '../../../shared/interfaces/cg-unit';
 import { NaviService } from '../../services/navi.service';
 import { ScannerService } from '../../services/scanner.service';
-import { TileDatabaseService } from '../../services/tile-database.service';
 import { TileSelectorDialogComponent } from '../../widgets/tile-selector-dialog/tile-selector-dialog.component';
 
 @Component({
