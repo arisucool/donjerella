@@ -386,6 +386,41 @@ describe('CgDonjaraFinishChecker', () => {
     ]);
   });
 
+  it('ノーマルライブ - 3人公式 + 3人公式 + 3人公式', () => {
+    expect(
+      finishChecker.checkFinish([
+        // ももぺあべりー
+        '087', // 橘ありす
+        '015', // 櫻井桃華
+        '155', // 的場梨沙
+        // プチ＊パフェアリー
+        '024', // 遊佐こずえ
+        '034', // 双葉杏
+        '104', // 佐城雪美
+        // fleeting bouquet
+        '124', // 結城晴
+        '026', // 一ノ瀬志希
+        '064', // 黒埼ちとせ
+      ])
+    ).toMatchObject([
+      {
+        name: 'ノーマルライブ',
+        score: 120000,
+        units: expect.arrayContaining([
+          expect.objectContaining({
+            label: 'プチ＊パフェアリー',
+          }),
+          expect.objectContaining({
+            label: 'ももぺあべりー',
+          }),
+          expect.objectContaining({
+            label: 'fleeting bouquet',
+          }),
+        ]),
+      },
+    ]);
+  });
+
   it('不成立 - 3人公式 + 3人公式 + 2人(Co-Da) + 1人(Pa-Da)', () => {
     expect(
       finishChecker.checkFinish([

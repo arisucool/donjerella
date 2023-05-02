@@ -261,6 +261,11 @@ export class CgDonjaraFinishChecker {
         !unit1.tileIdentifiers.every((id) => tiles.find((tile) => tile === id))
       )
         continue;
+      const idols1 = this.idols.filter((idol) =>
+        unit1.tileIdentifiers.find((tile) => tile === idol.identifier)
+      );
+      if (!idols1.every((idol) => idol.idolType === idols1[0].idolType))
+        continue;
       const remainingTiles1 = tiles.filter(
         (tile) => !unit1.tileIdentifiers.find((id) => id === tile)
       );
@@ -270,6 +275,11 @@ export class CgDonjaraFinishChecker {
             remainingTiles1.find((tile) => tile === id)
           )
         )
+          continue;
+        const idols2 = this.idols.filter((idol) =>
+          unit2.tileIdentifiers.find((tile) => tile === idol.identifier)
+        );
+        if (!idols2.every((idol) => idol.idolType === idols2[0].idolType))
           continue;
         const remainingTiles2 = remainingTiles1.filter(
           (tile) => !unit2.tileIdentifiers.find((id) => id === tile)
@@ -281,6 +291,13 @@ export class CgDonjaraFinishChecker {
             )
           )
             continue;
+
+          const idols3 = this.idols.filter((idol) =>
+            unit3.tileIdentifiers.find((tile) => tile === idol.identifier)
+          );
+          if (!idols3.every((idol) => idol.idolType === idols3[0].idolType))
+            continue;
+
           results.push({
             name: 'トリコロール',
             score: 240000,
