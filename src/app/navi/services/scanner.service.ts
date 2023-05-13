@@ -11,35 +11,34 @@ import { TileDatabaseService } from './tile-database.service';
   providedIn: 'root',
 })
 export class ScannerService {
-  private classifier?: DonjaraTileScanner;
+  private classifier: DonjaraTileScanner = new DonjaraTileScanner();
 
   constructor(private tileDatabaseService: TileDatabaseService) {}
 
   async initialize() {
-    this.classifier = new DonjaraTileScanner({
+    await this.classifier.initialize({
       modelBaseUrl: environment.modelBaseUrl,
     });
-    await this.classifier.initialize();
   }
 
   public getCameraPreviewStream() {
-    return this.classifier!.getPreviewMediaStream();
+    return this.classifier.getPreviewMediaStream();
   }
 
   public get onScanned$() {
-    return this.classifier!.onScanned$;
+    return this.classifier.onScanned$;
   }
 
   public get onDetectionStatusChanged$() {
-    return this.classifier!.onDetectionStatusChanged$;
+    return this.classifier.onDetectionStatusChanged$;
   }
 
   async onVideoFrame(videoElement: HTMLVideoElement) {
-    await this.classifier!.onVideoFrame(videoElement);
+    await this.classifier.onVideoFrame(videoElement);
   }
 
   async detect() {
-    return this.classifier!.detect();
+    return this.classifier.detect();
   }
 
   async getCgTilesByScannerResult(

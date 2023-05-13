@@ -50,7 +50,13 @@ export class DonjaraTileScanner {
   // パイの表面領域の分類器
   private tileClassifier!: TileClassifier;
 
-  constructor(params: { modelBaseUrl: string }) {
+  constructor() {}
+
+  async initialize(params: { modelBaseUrl: string }) {
+    if (this.previewCanvas) {
+      return;
+    }
+
     this.tileDetector = new TileDetector({
       modelBaseUrl: params.modelBaseUrl,
     });
@@ -58,12 +64,6 @@ export class DonjaraTileScanner {
     this.tileClassifier = new TileClassifier({
       modelBaseUrl: params.modelBaseUrl,
     });
-  }
-
-  async initialize() {
-    if (this.previewCanvas) {
-      return;
-    }
 
     // プレビュー映像生成用キャンバスを初期化
     this.previewCanvas = document.createElement('canvas');
